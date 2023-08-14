@@ -28,7 +28,9 @@ import static org.reflections.Reflections.log;
 
 public class Main {
 
-    private final ShardManager shardManager;
+    public static String botName;
+    public static String botAvatar;
+    private ShardManager shardManager;
 
     public Main() throws LoginException, IOException {
         shardManager = buildBot();
@@ -58,9 +60,16 @@ public class Main {
         return commands;
     }
 
+    public static String getBotName() {
+        return botName;
+    }
+
+    public static String getBotAvatar() {
+        return botAvatar;
+    }
+
     @NotNull
     private ShardManager buildBot() throws IOException {
-        final ShardManager shardManager;
         String token = getToken();
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
         builder.setStatus(OnlineStatus.ONLINE);
@@ -73,11 +82,9 @@ public class Main {
 
         shardManager = builder.build();
         shardManager.addEventListener(new EventListeners());
+        botName = shardManager.getShards().get(0).getSelfUser().getName();
+        botAvatar = shardManager.getShards().get(0).getSelfUser().getAvatarUrl();
 
-        return shardManager;
-    }
-
-    public ShardManager getShardManager() {
         return shardManager;
     }
 }
