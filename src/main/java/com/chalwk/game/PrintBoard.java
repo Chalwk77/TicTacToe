@@ -23,15 +23,7 @@ public class PrintBoard {
         StringBuilder sb = new StringBuilder();
 
         int len = b.length;
-        letters = Arrays.copyOfRange(new String[]{
-                "A", "B", "C", "D",
-                "E", "F", "G", "H",
-                "I", "J", "K", "L",
-                "M", "N", "O", "P",
-                "Q", "R", "S", "T",
-                "U", "V", "W", "X",
-                "Y", "Z"
-        }, 0, len);
+        String[] alphabet = Arrays.copyOfRange(letters, 0, len);
 
         for (int i = 0; i < len; i++) {
 
@@ -39,7 +31,7 @@ public class PrintBoard {
             if (i == 0) {
                 sb.append("    ");
                 for (int j = 0; j < len; j++) {
-                    sb.append(letters[j]).append("   ");
+                    sb.append(alphabet[j]).append("   ");
                 }
             }
             sb.append("\n");

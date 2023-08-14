@@ -14,7 +14,15 @@ public class Game {
     public static char player2 = 'O';
     public static char[][] board;
     public static char filler = '-';
-    public static String[] letters = {};
+    public static String[] letters = {
+            "A", "B", "C", "D",
+            "E", "F", "G", "H",
+            "I", "J", "K", "L",
+            "M", "N", "O", "P",
+            "Q", "R", "S", "T",
+            "U", "V", "W", "X",
+            "Y", "Z"
+    };
     public static Map<String, int[]> cell_indicators = new HashMap<>();
 
     public static int[][][] WINNING_COMBINATIONS = {

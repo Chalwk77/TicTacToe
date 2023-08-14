@@ -90,19 +90,11 @@ public class Invite implements CommandInterface {
 
     private void newBoard(OptionMapping boardSize) {
         board = boards[boardSize.getAsInt()];
-        letters = Arrays.copyOfRange(new String[]{
-                "A", "B", "C", "D",
-                "E", "F", "G", "H",
-                "I", "J", "K", "L",
-                "M", "N", "O", "P",
-                "Q", "R", "S", "T",
-                "U", "V", "W", "X",
-                "Y", "Z"
-        }, 0, board.length);
+        String[] alphabet = Arrays.copyOfRange(letters, 0, board.length);
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board.length; col++) {
                 board[row][col] = filler;
-                cell_indicators.put(letters[row] + (col + 1), new int[]{col, row});
+                cell_indicators.put(alphabet[row] + (col + 1), new int[]{col, row});
             }
         }
     }
