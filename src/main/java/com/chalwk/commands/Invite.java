@@ -12,11 +12,12 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static com.chalwk.game.Globals.*;
+import static com.chalwk.game.Globals.boards;
+import static com.chalwk.game.Globals.games;
 import static com.chalwk.game.PrivateMessage.privateMessage;
+import static com.chalwk.game.board.newBoard;
 import static com.chalwk.game.board.printBoard;
 
 public class Invite implements CommandInterface {
@@ -92,17 +93,5 @@ public class Invite implements CommandInterface {
         buttons.add(Button.secondary("cancel", "\uD83D\uDEAB Cancel"));
 
         event.replyEmbeds(embed.build()).addActionRow(buttons).queue();
-    }
-
-    private char[][] newBoard(OptionMapping boardSize) {
-        char[][] board = boards[boardSize.getAsInt()];
-        String[] alphabet = Arrays.copyOfRange(letters, 0, board.length);
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board.length; col++) {
-                board[row][col] = filler;
-                cell_indicators.put(alphabet[row] + (col + 1), new int[]{col, row});
-            }
-        }
-        return board;
     }
 }

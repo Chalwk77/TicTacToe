@@ -3,6 +3,7 @@ package com.chalwk.game;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.ArrayList;
@@ -11,10 +12,36 @@ import java.util.List;
 
 import static com.chalwk.Main.getBotAvatar;
 import static com.chalwk.Main.getBotName;
-import static com.chalwk.game.Globals.letters;
+import static com.chalwk.game.Globals.*;
 
 public class board {
 
+    /***
+     * Create a new board.
+     * @param boardSize The size of the board (3x3, 4x4, 5x5).
+     * @return The new board.
+     */
+    public static char[][] newBoard(OptionMapping boardSize) {
+        char[][] board = boards[boardSize.getAsInt()];
+        String[] alphabet = Arrays.copyOfRange(letters, 0, board.length);
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board.length; col++) {
+                board[row][col] = filler;
+                cell_indicators.put(alphabet[row] + (col + 1), new int[]{col, row});
+            }
+        }
+        return board;
+    }
+
+    /***
+     * Get the board embed object.
+     * @param board The board to print.
+     * @param whosTurn The name of the current player's turn.
+     * @param challengerName The name of the challenger.
+     * @param opponentName The name of the opponent.
+     * @param event The event object that triggered the board (button click).
+     * @return The board embed object.
+     */
     public static EmbedBuilder getBoardEmbed(char[][] board, String whosTurn, String challengerName, String opponentName, ButtonInteractionEvent event) {
 
         String botName = getBotName();
@@ -29,7 +56,6 @@ public class board {
         return embed;
     }
 
-
     /***
      * Print the board.
      * @param board The board to print.
@@ -41,11 +67,16 @@ public class board {
         return buildBoard(board);
     }
 
-    private static String buildBoard(char[][] b) {
+    /***
+     *
+     * @param board The board to print.
+     * @return Neatly formatted board.
+     */
+    private static String buildBoard(char[][] board) {
 
         StringBuilder sb = new StringBuilder();
 
-        int len = b.length;
+        int len = board.length;
         String[] alphabet = Arrays.copyOfRange(letters, 0, len);
 
         for (int i = 0; i < len; i++) {
@@ -62,7 +93,7 @@ public class board {
             // Print the middle of the board and numbers on the left side.
             sb.append(i + 1).append(" | ");
             for (int j = 0; j < len; j++) {
-                sb.append(b[i][j]).append(" | ");
+                sb.append(board[i][j]).append(" | ");
             }
             sb.append("\n");
 
@@ -76,6 +107,12 @@ public class board {
         return sb.toString();
     }
 
+    /***
+     * Set up the buttons for the board.
+     * @param board The board to set up.
+     * @param boardEmbed The board embed object.
+     * @param event The event object that triggered the board (button click).
+     */
     public static void setupButtons(char[][] board, EmbedBuilder boardEmbed, ButtonInteractionEvent event) {
 
         List<Button> buttons = new ArrayList<>();
