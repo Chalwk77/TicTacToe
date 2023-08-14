@@ -36,10 +36,8 @@ public class PrintBoard {
             }
             sb.append("\n");
 
-            // Print the numbers on the left side of the board.
+            // Print the middle of the board and numbers on the left side.
             sb.append(i + 1).append(" | ");
-
-            // Print the board.
             for (int j = 0; j < len; j++) {
                 sb.append(b[i][j]).append(" | ");
             }
