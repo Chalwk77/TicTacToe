@@ -19,7 +19,7 @@ public class Moves {
      * @param input The input from the event.
      * @return true if the move is allowed, false if not.
      */
-    public static boolean moveAllowed(char[][] board, ButtonInteractionEvent event, String input, String whosTurn, String inviteeName, String opponentName) {
+    public static boolean moveAllowed(char[][] board, ButtonInteractionEvent event, String input, String whosTurn, String challengerName, String opponentName) {
 
         Member member = event.getMember();
         assert member != null;
@@ -29,7 +29,7 @@ public class Moves {
             return true;
         }
 
-        EmbedBuilder currentBoard = getBoard(board, whosTurn, inviteeName, opponentName, event);
+        EmbedBuilder currentBoard = getBoard(board, whosTurn, challengerName, opponentName, event);
         currentBoard.addField(whosTurn + ", that cell is already taken. Please select another cell.", "", true);
         event.editMessageEmbeds(currentBoard.build()).queue();
 
@@ -42,18 +42,18 @@ public class Moves {
      * @param input The user input
      * @param symbol The symbol to place
      */
-    public static void placeMove(char[][] board, String input, char symbol, String whosTurn, String inviteeName, String opponentName, ButtonInteractionEvent event, String[] game) {
+    public static void placeMove(char[][] board, String input, char symbol, String whosTurn, String challengerName, String opponentName, ButtonInteractionEvent event, String[] game) {
 
         int[] cells = cell_indicators.get(input.toUpperCase());
         int row = cells[0];
         int col = cells[1];
 
         board[row][col] = symbol;
-        EmbedBuilder currentBoard = getBoard(board, whosTurn, inviteeName, opponentName, event);
+        EmbedBuilder currentBoard = getBoard(board, whosTurn, challengerName, opponentName, event);
         currentBoard.addField(whosTurn + " selected " + input.toUpperCase(), "\n\n", true);
 
         event.editMessageEmbeds(currentBoard.build()).queue();
 
-        gameOver(board, event, whosTurn, inviteeName, opponentName);
+        gameOver(board, event, whosTurn, challengerName, opponentName);
     }
 }

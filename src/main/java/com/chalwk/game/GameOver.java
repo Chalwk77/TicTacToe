@@ -11,11 +11,11 @@ import static com.chalwk.game.board.getBoard;
 
 public class GameOver {
 
-    private static void endGame(int state, ButtonInteractionEvent event, String whosTurn, String inviteeName, String opponentName) {
+    private static void endGame(int state, ButtonInteractionEvent event, String whosTurn, String challengerName, String opponentName) {
         Member member = event.getMember();
         assert member != null;
 
-        EmbedBuilder currentBoard = getBoard(board, whosTurn, inviteeName, opponentName, event);
+        EmbedBuilder currentBoard = getBoard(board, whosTurn, challengerName, opponentName, event);
         if (state == 0) {
             currentBoard.setDescription("Game Over! It's a draw!");
         } else {
@@ -28,7 +28,7 @@ public class GameOver {
 
     }
 
-    public static boolean gameOver(char[][] board, ButtonInteractionEvent event, String whosTurn, String inviteeName, String opponentName) {
+    public static boolean gameOver(char[][] board, ButtonInteractionEvent event, String whosTurn, String challengerName, String opponentName) {
 
         int count = 0;
         for (char[] chars : board) {
@@ -40,10 +40,10 @@ public class GameOver {
         }
 
         if (count == board.length * board.length) {
-            endGame(0, event, whosTurn, inviteeName, opponentName);
+            endGame(0, event, whosTurn, challengerName, opponentName);
             return true;
         } else if (getWinner(board, player1) || getWinner(board, player2)) {
-            endGame(1, event, whosTurn, inviteeName, opponentName);
+            endGame(1, event, whosTurn, challengerName, opponentName);
             return true;
         }
 

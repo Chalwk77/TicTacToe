@@ -8,11 +8,11 @@ import static com.chalwk.game.PrintBoard.printBoard;
 
 public class board {
 
-    public static EmbedBuilder getBoard(char[][] board, String whosTurn, String inviteeName, String opponentName, ButtonInteractionEvent event) {
+    public static EmbedBuilder getBoard(char[][] board, String whosTurn, String challengerName, String opponentName, ButtonInteractionEvent event) {
 
         EmbedBuilder embed = new EmbedBuilder();
 
-        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n" + inviteeName + "  vs  " + opponentName);
+        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n" + challengerName + "  vs  " + opponentName);
         embed.addField("Board:", "```" + printBoard(board) + "```", false);
         embed.addField("It's now " + whosTurn + "'s turn.", "", false);
 

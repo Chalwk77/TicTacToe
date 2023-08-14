@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.chalwk.game.Game.*;
+import static com.chalwk.game.PrivateMessage.privateMessage;
 
 public class Invite implements CommandInterface {
 
@@ -60,23 +61,23 @@ public class Invite implements CommandInterface {
         OptionMapping size = event.getOption("board");
 
         if (option.getAsUser().isBot()) {
-            event.reply("You can't invite a bot to play Tic-Tac-Toe.").setEphemeral(true).queue();
+            privateMessage(event, event.getMember(), "You cannot invite a bot to play TicTacToe.");
         } else {
 
-            String inviteeID = event.getUser().getId();
+            String challengerID = event.getUser().getId();
             String opponentID = option.getAsUser().getId();
 
             newBoard(size);
-            showSubmission(event, inviteeID, opponentID);
-            games.put(guildID, new String[]{inviteeID, opponentID, "false"});
+            showSubmission(event, challengerID, opponentID);
+            games.put(guildID, new String[]{challengerID, opponentID, "false"});
         }
     }
 
-    private void showSubmission(SlashCommandInteractionEvent event, String inviteeID, String opponentID) {
+    private void showSubmission(SlashCommandInteractionEvent event, String challengerID, String opponentID) {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
-        embed.setDescription("<@" + opponentID + "> You have been invited to play TicTacToe by <@" + inviteeID + ">.");
+        embed.setDescription("<@" + opponentID + "> You have been invited to play TicTacToe by <@" + challengerID + ">.");
         embed.addField("Board Size:", board.length + "x" + board.length, false);
         embed.addField("\nA random player will be selected to go first.", "", true);
         embed.setFooter("Submission will expire in 60 seconds.");
