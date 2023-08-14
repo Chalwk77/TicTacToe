@@ -6,18 +6,27 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
-import static com.chalwk.game.Game.board;
-import static com.chalwk.game.Game.*;
+import java.util.Random;
+
+import static com.chalwk.game.Globals.*;
 import static com.chalwk.game.Moves.moveAllowed;
 import static com.chalwk.game.Moves.placeMove;
 import static com.chalwk.game.PrivateMessage.privateMessage;
-import static com.chalwk.game.board.getBoard;
+import static com.chalwk.game.board.getBoardEmbed;
+import static com.chalwk.game.board.setupButtons;
 
 public class ButtonClick {
     private static String challengerName;
     private static String opponentName;
 
-    private static void startGame(ButtonInteractionEvent event, String buttonID, String[] game) {
+    private static String whoStarts(String challenger, String opponent) {
+        Random random = new Random();
+        int randomNum = random.nextInt(2);
+        return (randomNum == 0) ? challenger : opponent;
+    }
+
+    // board, event, buttonID, game
+    private static void startGame(char[][] board, String[] game, String buttonID, ButtonInteractionEvent event) {
 
         Member member = event.getMember();
         String userID = member.getId();
@@ -26,9 +35,9 @@ public class ButtonClick {
             event.getMessage().delete().queue();
 
             String starter = whoStarts(challengerName, opponentName);
-            EmbedBuilder currentBoard = getBoard(board, starter, challengerName, opponentName, event);
+            EmbedBuilder currentBoard = getBoardEmbed(board, starter, challengerName, opponentName, event);
 
-            setupButtons(event, currentBoard);
+            setupButtons(board, currentBoard, event);
             game[2] = "true";
 
         } else if (buttonID.equalsIgnoreCase("decline")) {
@@ -93,7 +102,7 @@ public class ButtonClick {
 
             boolean gameStarted = game[2].equals("true");
             if (!gameStarted) {
-                startGame(event, buttonID, game);
+                startGame(board, game, buttonID, event);
             } else {
 
                 char symbol = (memberID.equals(challengerID)) ? player2 : player1;

@@ -5,17 +5,16 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
-import static com.chalwk.game.Game.board;
-import static com.chalwk.game.Game.*;
-import static com.chalwk.game.board.getBoard;
+import static com.chalwk.game.Globals.*;
+import static com.chalwk.game.board.getBoardEmbed;
 
 public class GameOver {
 
-    private static void endGame(int state, ButtonInteractionEvent event, String whosTurn, String challengerName, String opponentName) {
+    private static void endGame(char[][] board, int state, ButtonInteractionEvent event, String whosTurn, String challengerName, String opponentName) {
         Member member = event.getMember();
         assert member != null;
 
-        EmbedBuilder currentBoard = getBoard(board, whosTurn, challengerName, opponentName, event);
+        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName, event);
         if (state == 0) {
             currentBoard.setDescription("Game Over! It's a draw!");
         } else {
@@ -40,10 +39,10 @@ public class GameOver {
         }
 
         if (count == board.length * board.length) {
-            endGame(0, event, whosTurn, challengerName, opponentName);
+            endGame(board, 0, event, whosTurn, challengerName, opponentName);
             return true;
         } else if (getWinner(board, player1) || getWinner(board, player2)) {
-            endGame(1, event, whosTurn, challengerName, opponentName);
+            endGame(board, 1, event, whosTurn, challengerName, opponentName);
             return true;
         }
 

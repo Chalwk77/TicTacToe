@@ -5,10 +5,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
-import static com.chalwk.game.Game.cell_indicators;
-import static com.chalwk.game.Game.filler;
 import static com.chalwk.game.GameOver.gameOver;
-import static com.chalwk.game.board.getBoard;
+import static com.chalwk.game.Globals.cell_indicators;
+import static com.chalwk.game.Globals.filler;
+import static com.chalwk.game.board.getBoardEmbed;
 
 public class Moves {
 
@@ -29,7 +29,7 @@ public class Moves {
             return true;
         }
 
-        EmbedBuilder currentBoard = getBoard(board, whosTurn, challengerName, opponentName, event);
+        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName, event);
         currentBoard.addField(whosTurn + ", that cell is already taken. Please select another cell.", "", true);
         event.editMessageEmbeds(currentBoard.build()).queue();
 
@@ -49,7 +49,7 @@ public class Moves {
         int col = cells[1];
 
         board[row][col] = symbol;
-        EmbedBuilder currentBoard = getBoard(board, whosTurn, challengerName, opponentName, event);
+        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName, event);
         currentBoard.addField(whosTurn + " selected " + input.toUpperCase(), "\n\n", true);
 
         event.editMessageEmbeds(currentBoard.build()).queue();

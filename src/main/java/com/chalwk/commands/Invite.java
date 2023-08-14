@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.chalwk.game.Game.*;
-import static com.chalwk.game.PrintBoard.printBoard;
+import static com.chalwk.game.Globals.*;
 import static com.chalwk.game.PrivateMessage.privateMessage;
+import static com.chalwk.game.board.printBoard;
 
 public class Invite implements CommandInterface {
 
@@ -38,16 +38,16 @@ public class Invite implements CommandInterface {
         OptionData user = new OptionData(OptionType.USER, "opponent", "The user you want to invite.");
         user.setRequired(true);
 
-        OptionData board = new OptionData(OptionType.INTEGER, "board", "The board size you want to play on.");
+        OptionData option = new OptionData(OptionType.INTEGER, "board", "The board size you want to play on.");
 
         for (int i = 0; i < boards.length; i++) {
             String size = boards[i].length + "x" + boards[i].length;
-            board.addChoice(size, i);
+            option.addChoice(size, i);
         }
-        board.setRequired(true);
+        option.setRequired(true);
 
         options.add(user);
-        options.add(board);
+        options.add(option);
 
         return options;
     }
@@ -68,13 +68,13 @@ public class Invite implements CommandInterface {
             String challengerID = event.getUser().getId();
             String opponentID = option.getAsUser().getId();
 
-            newBoard(size);
-            showSubmission(event, challengerID, opponentID);
+            char[][] board = newBoard(size);
+            showSubmission(board, event, challengerID, opponentID);
             games.put(guildID, new String[]{challengerID, opponentID, "false"});
         }
     }
 
-    private void showSubmission(SlashCommandInteractionEvent event, String challengerID, String opponentID) {
+    private void showSubmission(char[][] board, SlashCommandInteractionEvent event, String challengerID, String opponentID) {
         String botName = event.getJDA().getSelfUser().getName() + " - Copyright (c) 2023. Jericho Crosby";
 
         EmbedBuilder embed = new EmbedBuilder();
@@ -94,8 +94,8 @@ public class Invite implements CommandInterface {
         event.replyEmbeds(embed.build()).addActionRow(buttons).queue();
     }
 
-    private void newBoard(OptionMapping boardSize) {
-        board = boards[boardSize.getAsInt()];
+    private char[][] newBoard(OptionMapping boardSize) {
+        char[][] board = boards[boardSize.getAsInt()];
         String[] alphabet = Arrays.copyOfRange(letters, 0, board.length);
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board.length; col++) {
@@ -103,5 +103,6 @@ public class Invite implements CommandInterface {
                 cell_indicators.put(alphabet[row] + (col + 1), new int[]{col, row});
             }
         }
+        return board;
     }
 }
