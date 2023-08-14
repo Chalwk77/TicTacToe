@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.chalwk.game.Game.*;
+import static com.chalwk.game.PrintBoard.printBoard;
 import static com.chalwk.game.PrivateMessage.privateMessage;
 
 public class Invite implements CommandInterface {
@@ -78,13 +79,14 @@ public class Invite implements CommandInterface {
 
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
         embed.setDescription("<@" + opponentID + "> You have been invited to play TicTacToe by <@" + challengerID + ">.");
-        embed.addField("Board Size:", board.length + "x" + board.length, false);
-        embed.addField("\nA random player will be selected to go first.", "", true);
+        embed.addField("A random player will be selected to go first.", "", true);
+        embed.addField("Board: (" + board.length + "x" + board.length + ")", "```" + printBoard(board) + "```", false);
         embed.setFooter("Submission will expire in 60 seconds.");
 
         List<Button> buttons = new ArrayList<>();
         buttons.add(Button.success("accept", "\uD83D\uDFE2 Accept"));
         buttons.add(Button.danger("decline", "\uD83D\uDD34 Decline"));
+        buttons.add(Button.secondary("cancel", "\uD83D\uDEAB Cancel"));
 
         event.replyEmbeds(embed.build()).addActionRow(buttons).queue();
     }

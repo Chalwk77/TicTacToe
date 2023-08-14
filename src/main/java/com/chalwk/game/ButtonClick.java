@@ -19,6 +19,9 @@ public class ButtonClick {
 
     private static void startGame(ButtonInteractionEvent event, String buttonID, String[] game) {
 
+        Member member = event.getMember();
+        String userID = member.getId();
+
         if (buttonID.equalsIgnoreCase("accept")) {
             event.getMessage().delete().queue();
 
@@ -28,7 +31,7 @@ public class ButtonClick {
             setupButtons(event, currentBoard);
             game[2] = "true";
 
-        } else {
+        } else if (buttonID.equalsIgnoreCase("decline")) {
 
             event.getMessage().delete().queue();
             event.replyEmbeds(new EmbedBuilder()
@@ -40,6 +43,13 @@ public class ButtonClick {
             Member challenger = guild.getMemberById(game[0]);
 
             privateMessage(event, challenger, "Your game invite to " + opponentName + " was declined.");
+        } else if (buttonID.equalsIgnoreCase("cancel")) {
+
+            if (!userID.equals(game[0])) {
+                privateMessage(event, member, "You are not the challenger. Unable to cancel.");
+                return;
+            }
+            event.getMessage().delete().queue();
         }
     }
 

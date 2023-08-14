@@ -11,13 +11,11 @@ public class board {
     public static EmbedBuilder getBoard(char[][] board, String whosTurn, String challengerName, String opponentName, ButtonInteractionEvent event) {
 
         EmbedBuilder embed = new EmbedBuilder();
-
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n" + challengerName + "  vs  " + opponentName);
         embed.addField("Board:", "```" + printBoard(board) + "```", false);
         embed.addField("It's now " + whosTurn + "'s turn.", "", false);
 
-        String botName = event.getJDA().getSelfUser().getName();
-        botName += " - Copyright (c) 2023. Jericho Crosby";
+        String botName = event.getJDA().getSelfUser().getName() + " - Copyright (c) 2023. Jericho Crosby";
 
         embed.setFooter(botName, event.getJDA().getSelfUser().getAvatarUrl());
         return embed;
