@@ -6,9 +6,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.util.Map;
-
-import static com.chalwk.game.Game.*;
+import static com.chalwk.game.Game.cell_indicators;
+import static com.chalwk.game.Game.filler;
 import static com.chalwk.game.GameOver.gameOver;
 import static com.chalwk.game.board.getBoard;
 

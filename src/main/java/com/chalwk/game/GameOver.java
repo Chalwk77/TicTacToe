@@ -5,8 +5,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
-import java.util.Timer;
-
 import static com.chalwk.game.Game.board;
 import static com.chalwk.game.Game.*;
 import static com.chalwk.game.board.getBoard;

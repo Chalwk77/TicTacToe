@@ -3,7 +3,6 @@ package com.chalwk.game;
 
 import java.util.Arrays;
 
-import static com.chalwk.game.Game.board;
 import static com.chalwk.game.Game.letters;
 
 public class PrintBoard {
@@ -34,7 +33,7 @@ public class PrintBoard {
                 "Y", "Z"
         }, 0, len);
 
-        for (int i = 0; i < len; i++){
+        for (int i = 0; i < len; i++) {
 
             // Print the letters at the top of the board.
             if (i == 0) {
