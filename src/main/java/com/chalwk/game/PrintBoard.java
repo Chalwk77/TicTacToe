@@ -15,10 +15,10 @@ public class PrintBoard {
     public static String printBoard(char[][] board) {
         int len = Game.board.length;
         if (len < 3 || len > 5) throw new IllegalStateException("Board size not supported: (" + len + "x" + len + ")");
-        return getBoard(board);
+        return buildBoard(board);
     }
 
-    private static String getBoard(char[][] b) {
+    private static String buildBoard(char[][] b) {
 
         StringBuilder sb = new StringBuilder();
 

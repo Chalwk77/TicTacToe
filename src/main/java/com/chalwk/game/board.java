@@ -9,11 +9,17 @@ import static com.chalwk.game.PrintBoard.printBoard;
 public class board {
 
     public static EmbedBuilder getBoard(char[][] board, String whosTurn, String inviteeName, String opponentName, ButtonInteractionEvent event) {
+
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n" + inviteeName + " vs " + opponentName);
-        embed.setDescription("It's " + whosTurn + "'s turn.");
-        embed.addField("Board", "```" + printBoard(board) + "```", false);
-        embed.setFooter("Tic-Tac-Toe", event.getJDA().getSelfUser().getAvatarUrl());
+
+        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n " + inviteeName + " vs " + opponentName);
+        embed.addField("Board:", "```" + printBoard(board) + "```", false);
+        embed.addField("It's now " + whosTurn + "'s turn.", "", false);
+
+        String botName = event.getJDA().getSelfUser().getName();
+        botName += " - Copyright (c) 2023. Jericho Crosby";
+
+        embed.setFooter(botName, event.getJDA().getSelfUser().getAvatarUrl());
         return embed;
     }
 }

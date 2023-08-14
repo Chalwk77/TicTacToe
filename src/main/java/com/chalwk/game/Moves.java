@@ -55,7 +55,7 @@ public class Moves {
 
         board[row][col] = symbol;
         EmbedBuilder currentBoard = getBoard(board, whosTurn, inviteeName, opponentName, event);
-        currentBoard.addField(whosTurn + " has placed a " + symbol + " on " + input.toUpperCase(), " ", false);
+        currentBoard.addField(whosTurn + " selected " + input.toUpperCase(), "\n\n", true);
         event.editMessageEmbeds(currentBoard.build()).queue();
 
         gameOver(board, event, whosTurn, inviteeName, opponentName);
