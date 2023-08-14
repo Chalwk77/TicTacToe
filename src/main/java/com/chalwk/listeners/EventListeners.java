@@ -9,11 +9,10 @@ import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-import java.util.Random;
-import java.util.Timer;
+import java.util.*;
 
 import static com.chalwk.game.Game.*;
 import static com.chalwk.game.GameOver.gameOver;
@@ -41,43 +40,6 @@ public class EventListeners extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-
-        String input = event.getMessage().getContentRaw();
-
-        if (event.getAuthor().isBot()) return;
-        if (!moveAllowed(board, event, input)) return;
-
-        Member member = event.getMember();
-        String memberID = member.getId();
-        String guildID = event.getGuild().getId();
-
-        if (games.containsKey(guildID)) {
-
-            String[] game = games.get(guildID);
-            String inviteeID = game[0];
-            String opponentID = game[1];
-
-            if (!memberID.equals(inviteeID) && !memberID.equals(opponentID)) return;
-
-            Member inviteeMember = event.getGuild().getMemberById(inviteeID);
-            String inviteeName = inviteeMember.getEffectiveName();
-
-            Member opponentMember = event.getGuild().getMemberById(opponentID);
-            String opponentName = opponentMember.getEffectiveName();
-
-            String whosTurn;
-            char symbol = (memberID.equals(inviteeID)) ? player2 : player1;
-            whosTurn = (memberID.equals(inviteeID)) ? opponentName : inviteeName;
-
-            placeMove(board, input, symbol, whosTurn, inviteeName, opponentName, event, game);
-            event.getMessage().delete().queue();
-
-            gameOver(board, game, event);
-        }
-    }
-
-    @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
 
         Guild guild = event.getGuild();
@@ -86,41 +48,109 @@ public class EventListeners extends ListenerAdapter {
         Member member = event.getMember();
         String memberID = member.getId();
 
-        String buttonID = event.getComponentId();
-
         if (games.containsKey(guildID)) {
+
+            String buttonID = event.getComponentId();
+            String buttonLabel = event.getComponent().getLabel();
+
             String[] game = games.get(guildID);
 
             String inviteeID = game[0];
             String opponentID = game[1];
-            if (!allowClick(event, memberID, inviteeID, opponentID)) return;
 
-            getPlayers player = getPlayerNames(guild, inviteeID, opponentID);
-
-            if (buttonID.equalsIgnoreCase("accept")) {
-                event.getMessage().delete().queue();
-
-                String whoStarts = whoStarts(player.inviteeName, player.opponentName);
-
-                EmbedBuilder currentBoard = getBoard(board, whoStarts, player.inviteeName(), player.opponentName());
-                currentBoard.setFooter("Tic-Tac-Toe", event.getJDA().getSelfUser().getAvatarUrl());
-                event.replyEmbeds(currentBoard.build()).queue();
-                setEmbedID(event, game);
-
+            boolean gameStarted = game[2].equals("true");
+            if (!gameStarted) {
+                startGame(event, guild, inviteeID, opponentID, buttonID, game);
             } else {
 
-                event.getMessage().delete().queue();
-                event.replyEmbeds(
-                        new EmbedBuilder()
-                                .setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕ | " + player.inviteeName() + " vs " + player.opponentName())
-                                .setDescription("Game Declined.")
-                                .build()).queue();
+                getPlayers player = getPlayerNames(guild, inviteeID, opponentID);
 
-                event.getGuild().retrieveMemberById(inviteeID).queue(invitee -> {
-                    invitee.getUser().openPrivateChannel().queue(privateChannel -> {
-                        privateChannel.sendMessage("Your game invite to " + player.opponentName() + " was declined.").queue();
-                    });
+                String inviteeName = player.inviteeName();
+                String opponentName = player.opponentName();
+
+                char symbol = (memberID.equals(inviteeID)) ? player2 : player1;
+                String whosTurn = (memberID.equals(inviteeID)) ? opponentName : inviteeName;
+
+                placeMove(board, buttonLabel, symbol, whosTurn, inviteeName, opponentName, event, game);
+            }
+        }
+    }
+
+    private void startGame(ButtonInteractionEvent event, Guild guild, String inviteeID, String opponentID, String buttonID, String[] game) {
+
+        getPlayers player = getPlayerNames(guild, inviteeID, opponentID);
+        if (buttonID.equalsIgnoreCase("accept")) {
+            event.getMessage().delete().queue();
+
+            String whoStarts = whoStarts(player.inviteeName, player.opponentName);
+
+            EmbedBuilder currentBoard = getBoard(board, whoStarts, player.inviteeName(), player.opponentName(), event);
+
+            setupButtons(event, currentBoard);
+            game[2] = "true"; // game started
+
+        } else {
+
+            event.getMessage().delete().queue();
+            event.replyEmbeds(
+                    new EmbedBuilder()
+                            .setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕ | " + player.inviteeName() + " vs " + player.opponentName())
+                            .setDescription("Game Declined.")
+                            .build()).queue();
+
+            event.getGuild().retrieveMemberById(inviteeID).queue(invitee -> {
+                invitee.getUser().openPrivateChannel().queue(privateChannel -> {
+                    privateChannel.sendMessage("Your game invite to " + player.opponentName() + " was declined.").queue();
                 });
+            });
+        }
+    }
+
+    private void setupButtons(ButtonInteractionEvent event, EmbedBuilder currentBoard) {
+
+        List<Button> buttons = new ArrayList<>();
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board.length; col++) {
+                int id = (row * board.length) + col;
+                Button button = Button.secondary(String.valueOf(id), letters[row] + (col + 1));
+                buttons.add(button);
+            }
+        }
+
+        int len = board.length;
+        switch (len) {
+            case 3 -> {
+                List<Button> row1 = buttons.subList(0, 3);
+                List<Button> row2 = buttons.subList(3, 6);
+                List<Button> row3 = buttons.subList(6, 9);
+                event.replyEmbeds(currentBoard.build())
+                        .addActionRow(row1)
+                        .addActionRow(row2)
+                        .addActionRow(row3).queue();
+            }
+            case 4 -> {
+                List<Button> row1 = buttons.subList(0, 4);
+                List<Button> row2 = buttons.subList(4, 8);
+                List<Button> row3 = buttons.subList(8, 12);
+                List<Button> row4 = buttons.subList(12, 16);
+                event.replyEmbeds(currentBoard.build())
+                        .addActionRow(row1)
+                        .addActionRow(row2)
+                        .addActionRow(row3)
+                        .addActionRow(row4).queue();
+            }
+            case 5 -> {
+                List<Button> row1 = buttons.subList(0, 5);
+                List<Button> row2 = buttons.subList(5, 10);
+                List<Button> row3 = buttons.subList(10, 15);
+                List<Button> row4 = buttons.subList(15, 20);
+                List<Button> row5 = buttons.subList(20, 25);
+                event.replyEmbeds(currentBoard.build())
+                        .addActionRow(row1)
+                        .addActionRow(row2)
+                        .addActionRow(row3)
+                        .addActionRow(row4)
+                        .addActionRow(row5).queue();
             }
         }
     }
@@ -150,17 +180,6 @@ public class EventListeners extends ListenerAdapter {
             return false;
         }
         return true;
-    }
-
-    private void setEmbedID(ButtonInteractionEvent event, String[] game) {
-        Timer timer = new Timer();
-        timer.schedule(new java.util.TimerTask() {
-            @Override
-            public void run() {
-                long messageID = event.getChannel().getLatestMessageIdLong();
-                game[2] = String.valueOf(messageID);
-            }
-        }, 500);
     }
 
     private record getPlayers(String inviteeName, String opponentName) {

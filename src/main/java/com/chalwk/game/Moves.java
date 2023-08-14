@@ -3,12 +3,13 @@ package com.chalwk.game;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Map;
 
-import static com.chalwk.game.Game.cell_indicators;
-import static com.chalwk.game.Game.filler;
+import static com.chalwk.game.Game.*;
+import static com.chalwk.game.GameOver.gameOver;
 import static com.chalwk.game.board.getBoard;
 
 public class Moves {
@@ -47,41 +48,16 @@ public class Moves {
      * @param input The user input
      * @param symbol The symbol to place
      */
-    public static void placeMove(char[][] board, String input, char symbol, String whosTurn, String inviteeName, String opponentName, MessageReceivedEvent event, String[] game) {
+    public static void placeMove(char[][] board, String input, char symbol, String whosTurn, String inviteeName, String opponentName, ButtonInteractionEvent event, String[] game) {
 
         int[] cells = cell_indicators.get(input.toUpperCase());
         int row = cells[0];
         int col = cells[1];
 
         board[row][col] = symbol;
-        EmbedBuilder currentBoard = getBoard(board, whosTurn, inviteeName, opponentName);
+        EmbedBuilder currentBoard = getBoard(board, whosTurn, inviteeName, opponentName, event);
+        event.editMessageEmbeds(currentBoard.build()).queue();
 
-        String embedID = game[2];
-
-        currentBoard.setFooter("Tic-Tac-Toe", event.getJDA().getSelfUser().getAvatarUrl());
-        event.getChannel().editMessageEmbedsById(embedID, currentBoard.build()).queue();
-    }
-
-    public static String showValidMoves(char[][] board) {
-
-        StringBuilder moves = new StringBuilder();
-        int count = 0;
-
-        for (Map.Entry<String, int[]> entry : cell_indicators.entrySet()) {
-            String pos = entry.getKey();
-
-            int[] rowCol = entry.getValue();
-            int row = rowCol[0];
-            int col = rowCol[1];
-
-            count++;
-            if (count % 5 == 0) {
-                moves.append("\n");
-            } else if (board[row][col] == filler) {
-                moves.append(pos).append(", ");
-            }
-        }
-
-        return moves.toString();
+        gameOver(board, event, whosTurn, inviteeName, opponentName);
     }
 }

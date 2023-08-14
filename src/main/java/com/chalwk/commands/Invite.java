@@ -68,7 +68,7 @@ public class Invite implements CommandInterface {
 
             newBoard(size);
             showSubmission(event, inviteeID, opponentID);
-            games.put(guildID, new String[]{inviteeID, opponentID, ""});
+            games.put(guildID, new String[]{inviteeID, opponentID, "false"});
 
 //            Timer timer = new Timer();
 //            timer.schedule(new java.util.TimerTask() {
