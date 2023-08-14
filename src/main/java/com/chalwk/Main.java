@@ -22,6 +22,10 @@ import java.util.logging.Level;
 import static com.chalwk.util.Authentication.getToken;
 import static org.reflections.Reflections.log;
 
+// todo: Add support for concurrent games.
+// todo: prevent user from starting a game with themselves.
+// todo: prevent user from starting concurrent games (+ cooldown).
+
 public class Main {
 
     private final ShardManager shardManager;
