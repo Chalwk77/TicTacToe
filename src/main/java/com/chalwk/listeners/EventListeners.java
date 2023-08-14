@@ -67,10 +67,7 @@ public class EventListeners extends ListenerAdapter {
             String opponentName = opponentMember.getEffectiveName();
 
             String whosTurn;
-            char symbol = player1;
-            if (memberID.equals(inviteeID)) {
-                symbol = player2;
-            }
+            char symbol = (memberID.equals(inviteeID)) ? player2 : player1;
             whosTurn = (memberID.equals(inviteeID)) ? opponentName : inviteeName;
 
             placeMove(board, input, symbol, whosTurn, inviteeName, opponentName, event, game);
