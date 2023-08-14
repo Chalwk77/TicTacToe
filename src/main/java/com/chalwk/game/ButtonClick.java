@@ -36,7 +36,10 @@ public class ButtonClick {
                     .setDescription("Game Declined.")
                     .build()).queue();
 
-            privateMessage(event, event.getMember(), "Your game invite to " + opponentName + " was declined.");
+            Guild guild = event.getGuild();
+            Member challenger = guild.getMemberById(game[0]);
+
+            privateMessage(event, challenger, "Your game invite to " + opponentName + " was declined.");
         }
     }
 
