@@ -75,13 +75,16 @@ public class Invite implements CommandInterface {
     }
 
     private void showSubmission(SlashCommandInteractionEvent event, String challengerID, String opponentID) {
-        EmbedBuilder embed = new EmbedBuilder();
+        String botName = event.getJDA().getSelfUser().getName() + " - Copyright (c) 2023. Jericho Crosby";
 
+        EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
-        embed.setDescription("<@" + opponentID + "> You have been invited to play TicTacToe by <@" + challengerID + ">.");
-        embed.addField("A random player will be selected to go first.", "", true);
+        embed.setDescription("You have been invited to play TicTacToe.");
+        embed.addField("Challenger:", "<@" + challengerID + ">", true);
+        embed.addField("Opponent:", "<@" + opponentID + ">", true);
+        embed.addField("A random player will be selected to go first.", "", false);
         embed.addField("Board: (" + board.length + "x" + board.length + ")", "```" + printBoard(board) + "```", false);
-        embed.setFooter("Submission will expire in 60 seconds.");
+        embed.setFooter(botName, event.getJDA().getSelfUser().getAvatarUrl());
 
         List<Button> buttons = new ArrayList<>();
         buttons.add(Button.success("accept", "\uD83D\uDFE2 Accept"));
