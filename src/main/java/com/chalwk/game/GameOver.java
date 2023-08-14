@@ -61,7 +61,6 @@ public class GameOver {
      * Checks if the current player has won.
      */
     static boolean getWinner(char[][] board, char symbol) {
-
         int len = board.length;
         switch (len) {
             case 3 -> {
