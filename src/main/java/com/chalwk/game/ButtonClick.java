@@ -32,6 +32,10 @@ public class ButtonClick {
             game[2] = "true";
 
         } else if (buttonID.equalsIgnoreCase("decline")) {
+            if (userID.equals(game[0])) {
+                privateMessage(event, member, "You cannot decline your own game. Click cancel.");
+                return;
+            }
 
             event.getMessage().delete().queue();
             event.replyEmbeds(new EmbedBuilder()
@@ -44,11 +48,14 @@ public class ButtonClick {
 
             privateMessage(event, challenger, "Your game invite to " + opponentName + " was declined.");
         } else if (buttonID.equalsIgnoreCase("cancel")) {
-
             if (!userID.equals(game[0])) {
                 privateMessage(event, member, "You are not the challenger. Unable to cancel.");
                 return;
             }
+
+            String size = board.length + "x" + board.length;
+            privateMessage(event, member, "The (" + size + ") game invite to " + opponentName + " was cancelled.");
+
             event.getMessage().delete().queue();
         }
     }
