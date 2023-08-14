@@ -12,7 +12,7 @@ public class board {
 
         EmbedBuilder embed = new EmbedBuilder();
 
-        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n " + inviteeName + " vs " + opponentName);
+        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n" + inviteeName + "  vs  " + opponentName);
         embed.addField("Board:", "```" + printBoard(board) + "```", false);
         embed.addField("It's now " + whosTurn + "'s turn.", "", false);
 

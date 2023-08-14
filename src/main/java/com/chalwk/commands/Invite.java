@@ -77,8 +77,8 @@ public class Invite implements CommandInterface {
 
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
         embed.setDescription("<@" + opponentID + "> You have been invited to play TicTacToe by <@" + inviteeID + ">.");
-        embed.addField("Board Size:", board.length + "x" + board.length, true);
-        embed.addField("\nA random player will be selected to go first.", "", false);
+        embed.addField("Board Size:", board.length + "x" + board.length, false);
+        embed.addField("\nA random player will be selected to go first.", "", true);
         embed.setFooter("Submission will expire in 60 seconds.");
 
         List<Button> buttons = new ArrayList<>();
