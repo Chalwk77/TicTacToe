@@ -42,6 +42,15 @@ public class EventListeners extends ListenerAdapter {
             char[][] BOARD = {{'X', 'O', 'X'}, {'X', 'O', 'O'}, {'O', 'X', 'O'}};
             gameData.get(guildID).get("boards").put(String.valueOf(game_id), BOARD);
         }
+
+        Map<String, String[][]> players = new HashMap<>();
+        players.put(guildID, new String[][]{{challenger, opponent}});
+
+        String challengerName = players.get(guildID)[len][0];
+        String opponentName = players.get(guildID)[len][1];
+
+        System.out.println("Challenger: " + challengerName);
+        System.out.println("Opponent: " + opponentName);
     }
 
     @Override
