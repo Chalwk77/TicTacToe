@@ -13,8 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.chalwk.Main.concurrentGames;
-import static com.chalwk.game.Globals.board_layout;
+import static com.chalwk.game.Globals.*;
 import static com.chalwk.game.PrivateMessage.privateMessage;
 
 public class Invite implements CommandInterface {
@@ -65,8 +64,28 @@ public class Invite implements CommandInterface {
             String challengerID = event.getUser().getId();
             String opponentID = option.getAsUser().getId();
 
-            concurrentGames = new NewGame[]{new NewGame(size, event, challengerID, opponentID)};
-            concurrentGames[0].showSubmission(event);
+            invitePlayer(event, size, challengerID, opponentID);
         }
+    }
+
+    private void invitePlayer(SlashCommandInteractionEvent event, OptionMapping size, String challengerID, String opponentID) {
+
+        int gameCount = getGameCount();
+        NewGame new_game = new NewGame(size, event, challengerID, opponentID);
+        if (gameCount == 0) {
+            concurrentGames = new NewGame[1];
+            concurrentGames[0] = new_game;
+        } else {
+            NewGame[] newConcurrentGames = new NewGame[gameCount + 1];
+            System.arraycopy(concurrentGames, 0, newConcurrentGames, 0, gameCount);
+            newConcurrentGames[gameCount] = new_game;
+            concurrentGames = newConcurrentGames;
+        }
+        for (NewGame game : concurrentGames) {
+            System.out.println("NEW GAME INVITE SENT:");
+            System.out.println(game.challengerName + " vs " + game.opponentName);
+            System.out.println("Game Count: " + gameCount);
+        }
+        concurrentGames[gameCount].showSubmission(event);
     }
 }

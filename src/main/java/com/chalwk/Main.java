@@ -2,7 +2,6 @@
 
 package com.chalwk;
 
-import com.chalwk.game.NewGame;
 import com.chalwk.listeners.CommandInterface;
 import com.chalwk.listeners.CommandManager;
 import com.chalwk.listeners.EventListeners;
@@ -31,7 +30,6 @@ public class Main {
 
     public static String botName;
     public static String botAvatar;
-    public static NewGame[] concurrentGames;
     private ShardManager shardManager;
 
     public Main() throws LoginException, IOException {

@@ -4,6 +4,7 @@ package com.chalwk.game;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,7 @@ public class NewGame {
         this.guild = event.getGuild();
     }
 
-    public void setPlayers(String challengerID, String opponentID) {
+    private void setPlayers(String challengerID, String opponentID) {
         this.challengerID = challengerID;
         this.opponentID = opponentID;
         this.challengerName = guild.getMemberById(challengerID).getEffectiveName();
@@ -62,7 +63,7 @@ public class NewGame {
         this.cell_indicators = cells;
     }
 
-    public void createBoard(OptionMapping boardSize) {
+    private void createBoard(OptionMapping boardSize) {
         this.board = board_layout[boardSize.getAsInt()];
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board.length; col++) {
@@ -76,7 +77,7 @@ public class NewGame {
         return this.board;
     }
 
-    public String[] getLetters() {
+    private String[] getLetters() {
         return letters;
     }
 
@@ -147,5 +148,53 @@ public class NewGame {
         embed.addField("Board: (" + boardLength + "x" + boardLength + ")", "```" + printBoard() + "```", false);
         embed.setFooter(botName, event.getJDA().getSelfUser().getAvatarUrl());
         return embed;
+    }
+
+    private void setupButtons(EmbedBuilder embed, ButtonInteractionEvent event) {
+
+        int boardLength = this.getBoard().length;
+        List<Button> buttons = new ArrayList<>();
+        for (int row = 0; row < boardLength; row++) {
+            for (int col = 0; col < boardLength; col++) {
+                int id = (row * boardLength) + col;
+                buttons.add(Button.secondary(String.valueOf(id), getLetters()[row] + (col + 1)));
+            }
+        }
+
+        switch (boardLength) {
+            case 3 -> {
+                List<Button> row1 = buttons.subList(0, 3);
+                List<Button> row2 = buttons.subList(3, 6);
+                List<Button> row3 = buttons.subList(6, 9);
+                event.replyEmbeds(embed.build())
+                        .addActionRow(row1)
+                        .addActionRow(row2)
+                        .addActionRow(row3).queue();
+            }
+            case 4 -> {
+                List<Button> row1 = buttons.subList(0, 4);
+                List<Button> row2 = buttons.subList(4, 8);
+                List<Button> row3 = buttons.subList(8, 12);
+                List<Button> row4 = buttons.subList(12, 16);
+                event.replyEmbeds(embed.build())
+                        .addActionRow(row1)
+                        .addActionRow(row2)
+                        .addActionRow(row3)
+                        .addActionRow(row4).queue();
+            }
+            case 5 -> {
+                List<Button> row1 = buttons.subList(0, 5);
+                List<Button> row2 = buttons.subList(5, 10);
+                List<Button> row3 = buttons.subList(10, 15);
+                List<Button> row4 = buttons.subList(15, 20);
+                List<Button> row5 = buttons.subList(20, 25);
+                event.replyEmbeds(embed.build())
+                        .addActionRow(row1)
+                        .addActionRow(row2)
+                        .addActionRow(row3)
+                        .addActionRow(row4)
+                        .addActionRow(row5).queue();
+            }
+        }
     }
 }
