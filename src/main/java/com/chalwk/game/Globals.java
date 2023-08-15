@@ -2,25 +2,8 @@
 
 package com.chalwk.game;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Globals {
 
-    public static Map<String, String[]> concurrentGames = new HashMap<>();
-    public static char player1 = 'X';
-    public static char player2 = 'O';
-    public static char filler = '-';
-    public static String[] letters = {
-            "A", "B", "C", "D",
-            "E", "F", "G", "H",
-            "I", "J", "K", "L",
-            "M", "N", "O", "P",
-            "Q", "R", "S", "T",
-            "U", "V", "W", "X",
-            "Y", "Z"
-    };
-    public static Map<String, int[]> cell_indicators = new HashMap<>();
     public static int[][][] WINNING_COMBINATIONS = {
 
             // 3x3:
@@ -50,7 +33,7 @@ public class Globals {
                     {0, 6, 12, 18, 24}, {4, 8, 12, 16, 20} // diagonals
             }
     };
-    public static char[][][] boards = {
+    public static char[][][] board_layout = {
 
             // 3x3
             {

@@ -1,50 +1,46 @@
 /* Copyright (c) 2023, TicTacToe. Jericho Crosby <jericho.crosby227@gmail.com> */
 package com.chalwk.game;
 
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
-import static com.chalwk.game.Globals.*;
-import static com.chalwk.game.board.getBoardEmbed;
+import static com.chalwk.game.Globals.WINNING_COMBINATIONS;
 
 public class GameOver {
 
     private static void endGame(char[][] board, int state, ButtonInteractionEvent event, String whosTurn, String challengerName, String opponentName) {
-        Member member = event.getMember();
-        assert member != null;
-
-        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName);
-        if (state == 0) {
-            currentBoard.setDescription("Game Over! It's a draw!");
-        } else {
-
-            String name = member.getEffectiveName();
-            currentBoard.setDescription("Game Over! " + name + " has won the game!");
-        }
-        event.getHook().deleteOriginal().queue();
-        event.getHook().sendMessageEmbeds(currentBoard.build()).queue();
-
+//        Member member = event.getMember();
+//        assert member != null;
+//
+//        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName);
+//        if (state == 0) {
+//            currentBoard.setDescription("Game Over! It's a draw!");
+//        } else {
+//
+//            String name = member.getEffectiveName();
+//            currentBoard.setDescription("Game Over! " + name + " has won the game!");
+//        }
+//        event.getHook().deleteOriginal().queue();
+//        event.getHook().sendMessageEmbeds(currentBoard.build()).queue();
     }
 
     public static boolean gameOver(char[][] board, ButtonInteractionEvent event, String whosTurn, String challengerName, String opponentName) {
 
-        int count = 0;
-        for (char[] chars : board) {
-            for (char aChar : chars) {
-                if (aChar != filler) {
-                    count++;
-                }
-            }
-        }
-
-        if (count == board.length * board.length) {
-            endGame(board, 0, event, whosTurn, challengerName, opponentName);
-            return true;
-        } else if (getWinner(board, player1) || getWinner(board, player2)) {
-            endGame(board, 1, event, whosTurn, challengerName, opponentName);
-            return true;
-        }
+//        int count = 0;
+//        for (char[] chars : board) {
+//            for (char aChar : chars) {
+//                if (aChar != filler) {
+//                    count++;
+//                }
+//            }
+//        }
+//
+//        if (count == board.length * board.length) {
+//            endGame(board, 0, event, whosTurn, challengerName, opponentName);
+//            return true;
+//        } else if (getWinner(board, player1) || getWinner(board, player2)) {
+//            endGame(board, 1, event, whosTurn, challengerName, opponentName);
+//            return true;
+//        }
 
         return false;
     }

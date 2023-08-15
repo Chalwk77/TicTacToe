@@ -9,9 +9,6 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class EventListeners extends ListenerAdapter {
 
     @Override
@@ -27,30 +24,18 @@ public class EventListeners extends ListenerAdapter {
         Guild guild = event.getGuild();
         String guildID = guild.getId();
 
-        String challenger = "Chalwk";
-        String opponent = "ErratumKing";
+        //--------------------------------\\
+        // Initialize maps for this guild: \\
+        //----------------------------------\\
+//        boards.put(guildID, new HashMap<>());
+//        boards.get(guildID).put("boards", new HashMap<>());
+//        board_indicators.put(guildID, new HashMap<>());
+//        board_indicators.get(guildID).put("indicators", new HashMap<>());
+//        players.put(guildID, new String[][]{});
 
-
-        //=================================================================================//
-        Map<String, Map<String, Map<String, char[][]>>> gameData = new HashMap<>();
-        gameData.put(guildID, new HashMap<>());
-        gameData.get(guildID).put("boards", new HashMap<>());
-        gameData.get(guildID).put("players", new HashMap<>());
-
-        int len = gameData.get(guildID).get("boards").size();
-        for (int game_id = 0; game_id < len; game_id++) {
-            char[][] BOARD = {{'X', 'O', 'X'}, {'X', 'O', 'O'}, {'O', 'X', 'O'}};
-            gameData.get(guildID).get("boards").put(String.valueOf(game_id), BOARD);
-        }
-
-        Map<String, String[][]> players = new HashMap<>();
-        players.put(guildID, new String[][]{{challenger, opponent}});
-
-        String challengerName = players.get(guildID)[len][0];
-        String opponentName = players.get(guildID)[len][1];
-
-        System.out.println("Challenger: " + challengerName);
-        System.out.println("Opponent: " + opponentName);
+        // Add to map_players with:  players.put(guildID, new String[][]{{challenger, opponent}});
+        // String challengerName = map_players.get(guildID)[len][0];
+        // String opponentName = map_players.get(guildID)[len][1];
     }
 
     @Override

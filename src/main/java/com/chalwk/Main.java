@@ -2,6 +2,7 @@
 
 package com.chalwk;
 
+import com.chalwk.game.NewGame;
 import com.chalwk.listeners.CommandInterface;
 import com.chalwk.listeners.CommandManager;
 import com.chalwk.listeners.EventListeners;
@@ -30,6 +31,7 @@ public class Main {
 
     public static String botName;
     public static String botAvatar;
+    public static NewGame[] concurrentGames;
     private ShardManager shardManager;
 
     public Main() throws LoginException, IOException {
@@ -45,6 +47,14 @@ public class Main {
         }
     }
 
+    public static String getBotName() {
+        return botName;
+    }
+
+    public static String getBotAvatar() {
+        return botAvatar;
+    }
+
     @NotNull
     private CommandManager loadCommands() {
         CommandManager commands = new CommandManager();
@@ -58,14 +68,6 @@ public class Main {
             }
         }
         return commands;
-    }
-
-    public static String getBotName() {
-        return botName;
-    }
-
-    public static String getBotAvatar() {
-        return botAvatar;
     }
 
     @NotNull
