@@ -38,6 +38,8 @@ public class ButtonClick {
                     game.placeMove(event, buttonLabel, game); // magic happens here.
                 }
                 break;
+//            } else {
+//                privateMessage(event, member, "You are not a player in this game.");
             }
         }
     }

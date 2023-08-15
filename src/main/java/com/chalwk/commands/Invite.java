@@ -4,7 +4,6 @@ package com.chalwk.commands;
 
 import com.chalwk.game.Game;
 import com.chalwk.listeners.CommandInterface;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -30,40 +29,29 @@ public class Invite implements CommandInterface {
 
     @Override
     public List<OptionData> getOptions() {
-
         List<OptionData> options = new ArrayList<>();
         OptionData user = new OptionData(OptionType.USER, "opponent", "The user you want to invite.");
         user.setRequired(true);
-
         OptionData option = new OptionData(OptionType.INTEGER, "board", "The board size you want to play on.");
-
         for (int i = 0; i < board_layout.length; i++) {
             String size = board_layout[i].length + "x" + board_layout[i].length;
             option.addChoice(size, i);
         }
         option.setRequired(true);
-
         options.add(user);
         options.add(option);
-
         return options;
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-
-        Guild guild = event.getGuild();
-
         OptionMapping option = event.getOption("opponent");
         OptionMapping size = event.getOption("board");
-
         if (option.getAsUser().isBot()) {
             privateMessage(event, event.getMember(), "You cannot invite a bot to play TicTacToe.");
         } else {
-
             String challengerID = event.getUser().getId();
             String opponentID = option.getAsUser().getId();
-
             invitePlayer(event, size, challengerID, opponentID);
         }
     }

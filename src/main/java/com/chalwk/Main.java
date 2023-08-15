@@ -22,9 +22,10 @@ import java.util.logging.Level;
 import static com.chalwk.util.Authentication.getToken;
 import static org.reflections.Reflections.log;
 
-// todo: Add support for concurrent games.
-// todo: prevent user from starting a game with themselves.
-// todo: prevent user from starting concurrent games (+ cooldown).
+// fixme: Players can place a move on a button when it's not their turn.
+// fixme: Throws an exception when you start another game.
+// todo: Prevent players from starting a game with themselves.
+// todo: Implement invitation expiration timer.
 
 public class Main {
 

@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -146,7 +145,6 @@ public class Game {
         event.replyEmbeds(embed.build()).addActionRow(buttons).queue();
     }
 
-    @NotNull
     private EmbedBuilder getEmbedBuilder(SlashCommandInteractionEvent event, int boardLength, String botName) {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
@@ -215,8 +213,11 @@ public class Game {
             return true;
         }
 
+        Member member = event.getMember();
+        String name = member.getEffectiveName();
+
         EmbedBuilder currentBoard = getBoardEmbed();
-        currentBoard.addField(this.whos_turn + ", that cell is already taken. Please select another cell.", "", true);
+        currentBoard.addField(name + ", that cell is already taken. Please select another cell.", "", true);
         event.editMessageEmbeds(currentBoard.build()).queue();
 
         return false;
@@ -230,8 +231,11 @@ public class Game {
 
         this.board[row][col] = this.symbol;
         EmbedBuilder currentBoard = getBoardEmbed();
-        currentBoard.addField(this.whos_turn + " selected " + input.toUpperCase(), "\n\n", true);
 
+        Member member = event.getMember();
+        String name = member.getEffectiveName();
+
+        currentBoard.addField(name + " selected " + input.toUpperCase(), "\n\n", true);
         event.editMessageEmbeds(currentBoard.build()).queue();
 
         gameOver(game, event);
