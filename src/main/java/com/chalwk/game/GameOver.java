@@ -41,7 +41,7 @@ public class GameOver {
         if (count == board.length * board.length) {
             endGame(game, 0, event);
             return true;
-        } else if (checkWinner(board, game.player1) || checkWinner(board, game.player2)) {
+        } else if (checkWinner(game)) {
             endGame(game, 1, event);
             return true;
         }
@@ -49,14 +49,15 @@ public class GameOver {
         return false;
     }
 
-    private static boolean checkWinner(char[][] board, char symbol) {
+    private static boolean checkWinner(Game game) {
+        char[][] board = game.getBoard();
         int len = board.length;
         int[][][] winningCombinations = new int[][][]{WINNING_COMBINATIONS[len - 3]};
         for (int[][] winningCombination : winningCombinations) {
             for (int[] combination : winningCombination) {
                 for (int i = 0; i < combination.length; i++) {
                     int x = combination[i];
-                    if (board[x / len][x % len] != symbol) {
+                    if (board[x / len][x % len] != game.player1 && board[x / len][x % len] != game.player2) {
                         break;
                     }
                     if (i == combination.length - 1) {
