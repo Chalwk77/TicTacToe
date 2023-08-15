@@ -177,17 +177,29 @@ public class Game {
                         .addActionRow(row2)
                         .addActionRow(row3).queue();
             }
-
-            case 4, 5 -> {
-                List<Button> row1 = buttons.subList(0, boardLength);
-                List<Button> row2 = buttons.subList(boardLength, boardLength * 2);
-                List<Button> row3 = buttons.subList(boardLength * 2, boardLength * 3);
-                List<Button> row4 = buttons.subList(boardLength * 3, boardLength * 4);
+            case 4 -> {
+                List<Button> row1 = buttons.subList(0, 4);
+                List<Button> row2 = buttons.subList(4, 8);
+                List<Button> row3 = buttons.subList(8, 12);
+                List<Button> row4 = buttons.subList(12, 16);
                 event.replyEmbeds(embed.build())
                         .addActionRow(row1)
                         .addActionRow(row2)
                         .addActionRow(row3)
                         .addActionRow(row4).queue();
+            }
+            case 5 -> {
+                List<Button> row1 = buttons.subList(0, 5);
+                List<Button> row2 = buttons.subList(5, 10);
+                List<Button> row3 = buttons.subList(10, 15);
+                List<Button> row4 = buttons.subList(15, 20);
+                List<Button> row5 = buttons.subList(20, 25);
+                event.replyEmbeds(embed.build())
+                        .addActionRow(row1)
+                        .addActionRow(row2)
+                        .addActionRow(row3)
+                        .addActionRow(row4)
+                        .addActionRow(row5).queue();
             }
         }
     }
