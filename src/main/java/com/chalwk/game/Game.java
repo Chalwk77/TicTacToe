@@ -19,8 +19,8 @@ import static com.chalwk.game.PrivateMessage.privateMessage;
 
 public class Game {
 
-    public static char filler = '-';
-    public static String[] letters = {
+    public static final char filler = '-';
+    public static final String[] letters = {
             "A", "B", "C", "D",
             "E", "F", "G", "H",
             "I", "J", "K", "L",
@@ -29,8 +29,8 @@ public class Game {
             "U", "V", "W", "X",
             "Y", "Z"
     };
-    public char player1 = 'X';
-    public char player2 = 'O';
+    public final char player1 = 'X';
+    public final char player2 = 'O';
     public String whos_turn;
     public String challengerID;
     public String opponentID;
@@ -245,12 +245,10 @@ public class Game {
         String botAvatar = getBotAvatar();
 
         EmbedBuilder embed = new EmbedBuilder();
-
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n" + this.challengerName + "  vs  " + this.opponentName);
         embed.addField("Board:", "```" + printBoard() + "```", false);
 
         this.whos_turn = this.whos_turn == null ? whoStarts() : this.whos_turn;
-
         embed.addField("It's now " + this.whos_turn + "'s turn.", "", false);
 
         embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
