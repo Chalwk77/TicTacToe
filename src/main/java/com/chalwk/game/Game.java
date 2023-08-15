@@ -36,10 +36,10 @@ public class Game {
     public String opponentID;
     public String challengerName;
     public String opponentName;
-    public Map<String, int[]> cell_indicators;
-    public int gameID;
-    public boolean started;
+    public Map<String, int[]> cell_indicators = new HashMap<>();
+    public boolean started = false;
     public char symbol;
+    public int gameID;
     private char[][] board;
     private Guild guild;
 
@@ -61,14 +61,13 @@ public class Game {
     }
 
     private void setCellIndicators() {
-        Map<String, int[]> cells = new HashMap<>();
+        this.cell_indicators = new HashMap<>();
         String[] alphabet = Arrays.copyOfRange(letters, 0, board.length);
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board.length; col++) {
-                cells.put(alphabet[row] + (col + 1), new int[]{col, row});
+                this.cell_indicators.put(alphabet[row] + (col + 1), new int[]{col, row});
             }
         }
-        this.cell_indicators = cells;
     }
 
     private void createBoard(OptionMapping boardSize) {
@@ -93,7 +92,7 @@ public class Game {
 
         StringBuilder sb = new StringBuilder();
 
-        int len = this.getBoard().length;
+        int len = this.board.length;
         String[] alphabet = Arrays.copyOfRange(getLetters(), 0, len);
 
         for (int i = 0; i < len; i++) {
@@ -110,7 +109,7 @@ public class Game {
             // Print the middle of the board and numbers on the left side.
             sb.append(i + 1).append(" | ");
             for (int j = 0; j < len; j++) {
-                sb.append(this.getBoard()[i][j]).append(" | ");
+                sb.append(this.board[i][j]).append(" | ");
             }
             sb.append("\n");
 
@@ -125,23 +124,21 @@ public class Game {
     }
 
     private String printBoard() {
-        int len = this.getBoard().length;
+        int len = this.board.length;
         if (len < 3 || len > 5) throw new IllegalStateException("Board size not supported: (" + len + "x" + len + ")");
         return buildBoard();
     }
 
     public void showSubmission(SlashCommandInteractionEvent event) {
 
-        int boardLength = this.getBoard().length;
+        int boardLength = this.board.length;
         String botName = event.getJDA().getSelfUser().getName() + " - Copyright (c) 2023. Jericho Crosby";
 
         EmbedBuilder embed = getEmbedBuilder(event, boardLength, botName);
-
         List<Button> buttons = new ArrayList<>();
         buttons.add(Button.success("accept", "\uD83D\uDFE2 Accept"));
         buttons.add(Button.danger("decline", "\uD83D\uDD34 Decline"));
         buttons.add(Button.secondary("cancel", "\uD83D\uDEAB Cancel"));
-
         event.replyEmbeds(embed.build()).addActionRow(buttons).queue();
     }
 
@@ -160,7 +157,8 @@ public class Game {
     private void setupButtons(EmbedBuilder embed, ButtonInteractionEvent event) {
 
         this.started = true;
-        int boardLength = this.getBoard().length;
+        int boardLength = this.board.length;
+
         List<Button> buttons = new ArrayList<>();
         for (int row = 0; row < boardLength; row++) {
             for (int col = 0; col < boardLength; col++) {
@@ -225,15 +223,15 @@ public class Game {
 
     public void placeMove(ButtonInteractionEvent event, String input, Game game) {
 
+        Member member = event.getMember();
+        String name = member.getEffectiveName();
+
         int[] cells = this.cell_indicators.get(input.toUpperCase());
         int row = cells[0];
         int col = cells[1];
 
         this.board[row][col] = this.symbol;
         EmbedBuilder currentBoard = getBoardEmbed();
-
-        Member member = event.getMember();
-        String name = member.getEffectiveName();
 
         currentBoard.addField(name + " selected " + input.toUpperCase(), "\n\n", true);
         event.editMessageEmbeds(currentBoard.build()).queue();
@@ -250,6 +248,9 @@ public class Game {
 
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n" + this.challengerName + "  vs  " + this.opponentName);
         embed.addField("Board:", "```" + printBoard() + "```", false);
+
+        this.whos_turn = this.whos_turn == null ? whoStarts() : this.whos_turn;
+
         embed.addField("It's now " + this.whos_turn + "'s turn.", "", false);
 
         embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
@@ -268,30 +269,41 @@ public class Game {
         String userID = member.getId();
 
         if (buttonID.equalsIgnoreCase("accept")) {
-            event.getMessage().delete().queue();
-            EmbedBuilder currentBoard = getBoardEmbed();
-            setupButtons(currentBoard, event);
+            acceptInvitation(event);
         } else if (buttonID.equalsIgnoreCase("decline")) {
             if (!userID.equals(this.opponentID)) {
                 privateMessage(event, member, "You are not the opponent. Unable to decline.");
                 return;
             }
-            event.getMessage().delete().queue();
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕ | " + this.challengerName + " vs " + this.opponentName)
-                    .setDescription("Game Declined.")
-                    .build()).queue();
-
-            Member challenger = guild.getMemberById(this.challengerID);
-            privateMessage(event, challenger, "Your game invite to " + this.opponentName + " was declined.");
+            declineInvitation(event);
         } else if (buttonID.equalsIgnoreCase("cancel")) {
             if (!userID.equals(this.challengerID)) {
                 privateMessage(event, member, "You are not the challenger. Unable to cancel.");
                 return;
             }
-            String size = this.getBoard().length + "x" + this.getBoard().length;
-            privateMessage(event, member, "The (" + size + ") game invite to " + this.opponentName + " was cancelled.");
-            event.getMessage().delete().queue();
+            cancelInvitation(event, member);
         }
+    }
+
+    private void acceptInvitation(ButtonInteractionEvent event) {
+        event.getMessage().delete().queue();
+        EmbedBuilder currentBoard = getBoardEmbed();
+        setupButtons(currentBoard, event);
+    }
+
+    private void cancelInvitation(ButtonInteractionEvent event, Member member) {
+        String size = this.board.length + "x" + this.board.length;
+        privateMessage(event, member, "The (" + size + ") game invite to " + this.opponentName + " was cancelled.");
+        event.getMessage().delete().queue();
+    }
+
+    private void declineInvitation(ButtonInteractionEvent event) {
+        event.getMessage().delete().queue();
+        event.replyEmbeds(new EmbedBuilder()
+                .setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕ | " + this.challengerName + " vs " + this.opponentName)
+                .setDescription("Game Declined.")
+                .build()).queue();
+        Member challenger = guild.getMemberById(this.challengerID);
+        privateMessage(event, challenger, "Your game invite to " + this.opponentName + " was declined.");
     }
 }

@@ -71,6 +71,5 @@ public class Invite implements CommandInterface {
         }
         concurrentGames[gameCount].showSubmission(event);
         concurrentGames[gameCount].gameID = gameCount;
-        concurrentGames[gameCount].started = false;
     }
 }

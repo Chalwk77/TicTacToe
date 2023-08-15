@@ -30,7 +30,7 @@ public class GameOver {
         char[][] board = game.getBoard();
 
         int count = 0;
-        for (char[] chars : game.getBoard()) {
+        for (char[] chars : board) {
             for (char aChar : chars) {
                 if (aChar != Game.filler) {
                     count++;
@@ -41,7 +41,7 @@ public class GameOver {
         if (count == board.length * board.length) {
             endGame(game, 0, event);
             return true;
-        } else if (getWinner(game, game.player1) || getWinner(game, game.player2)) {
+        } else if (getWinner(board, game.player1) || getWinner(board, game.player2)) {
             endGame(game, 1, event);
             return true;
         }
@@ -49,8 +49,7 @@ public class GameOver {
         return false;
     }
 
-    static boolean getWinner(Game game, char winner) {
-        char[][] board = game.getBoard();
+    static boolean getWinner(char[][] board, char winner) {
         int len = board.length;
         switch (len) {
             case 3 -> {

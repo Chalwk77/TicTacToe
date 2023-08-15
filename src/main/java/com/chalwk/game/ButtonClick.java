@@ -12,6 +12,7 @@ public class ButtonClick {
 
         Member member = event.getMember();
         String memberID = member.getId();
+        String name = member.getUser().getName();
 
         for (Game game : concurrentGames) {
 
@@ -28,7 +29,6 @@ public class ButtonClick {
                 if (!started) {
                     game.startGame(event, buttonID);
                 } else {
-
                     String buttonLabel = button.getLabel();
                     game.whos_turn = (memberID.equals(challengerID)) ? opponentName : challengerName;
 

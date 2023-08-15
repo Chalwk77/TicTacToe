@@ -23,7 +23,7 @@ import static com.chalwk.util.Authentication.getToken;
 import static org.reflections.Reflections.log;
 
 // fixme: Players can place a move on a button when it's not their turn.
-// fixme: Throws an exception when you start another game.
+// fixme: Throws NullPointerException (Cannot load from int array because "cells" is null) when you start another game.
 // todo: Prevent players from starting a game with themselves.
 // todo: Implement invitation expiration timer.
 
