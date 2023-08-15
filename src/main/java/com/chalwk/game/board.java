@@ -42,7 +42,7 @@ public class board {
      * @param event The event object that triggered the board (button click).
      * @return The board embed object.
      */
-    public static EmbedBuilder getBoardEmbed(char[][] board, String whosTurn, String challengerName, String opponentName, ButtonInteractionEvent event) {
+    public static EmbedBuilder getBoardEmbed(char[][] board, String whosTurn, String challengerName, String opponentName) {
 
         String botName = getBotName();
         String botAvatar = getBotAvatar();

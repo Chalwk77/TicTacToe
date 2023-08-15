@@ -29,7 +29,7 @@ public class Moves {
             return true;
         }
 
-        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName, event);
+        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName);
         currentBoard.addField(whosTurn + ", that cell is already taken. Please select another cell.", "", true);
         event.editMessageEmbeds(currentBoard.build()).queue();
 
@@ -49,7 +49,7 @@ public class Moves {
         int col = cells[1];
 
         board[row][col] = symbol;
-        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName, event);
+        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName);
         currentBoard.addField(whosTurn + " selected " + input.toUpperCase(), "\n\n", true);
 
         event.editMessageEmbeds(currentBoard.build()).queue();

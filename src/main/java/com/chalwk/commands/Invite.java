@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.chalwk.game.Globals.boards;
-import static com.chalwk.game.Globals.games;
+import static com.chalwk.game.Globals.concurrentGames;
 import static com.chalwk.game.PrivateMessage.privateMessage;
 import static com.chalwk.game.board.newBoard;
 import static com.chalwk.game.board.printBoard;
@@ -71,7 +71,8 @@ public class Invite implements CommandInterface {
 
             char[][] board = newBoard(size);
             showSubmission(board, event, challengerID, opponentID);
-            games.put(guildID, new String[]{challengerID, opponentID, "false"});
+
+            concurrentGames.put(guildID, new String[]{challengerID, opponentID, "false"});
         }
     }
 

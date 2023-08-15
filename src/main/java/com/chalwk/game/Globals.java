@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Globals {
 
-    public static Map<String, String[]> games = new HashMap<>();
+    public static Map<String, String[]> concurrentGames = new HashMap<>();
     public static char player1 = 'X';
     public static char player2 = 'O';
     public static char filler = '-';

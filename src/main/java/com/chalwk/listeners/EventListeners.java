@@ -3,10 +3,14 @@
 package com.chalwk.listeners;
 
 import com.chalwk.game.ButtonClick;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EventListeners extends ListenerAdapter {
 
@@ -19,6 +23,25 @@ public class EventListeners extends ListenerAdapter {
                  |  | /  `     |   /\\  /  `     |  /  \\ |__
                  |  | \\__,     |  /~~\\ \\__,     |  \\__/ |___
                 ________________________________________________""");
+
+        Guild guild = event.getGuild();
+        String guildID = guild.getId();
+
+        String challenger = "Chalwk";
+        String opponent = "ErratumKing";
+
+
+        //=================================================================================//
+        Map<String, Map<String, Map<String, char[][]>>> gameData = new HashMap<>();
+        gameData.put(guildID, new HashMap<>());
+        gameData.get(guildID).put("boards", new HashMap<>());
+        gameData.get(guildID).put("players", new HashMap<>());
+
+        int len = gameData.get(guildID).get("boards").size();
+        for (int game_id = 0; game_id < len; game_id++) {
+            char[][] BOARD = {{'X', 'O', 'X'}, {'X', 'O', 'O'}, {'O', 'X', 'O'}};
+            gameData.get(guildID).get("boards").put(String.valueOf(game_id), BOARD);
+        }
     }
 
     @Override

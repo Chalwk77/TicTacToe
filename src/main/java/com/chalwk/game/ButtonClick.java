@@ -9,8 +9,6 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import java.util.Random;
 
 import static com.chalwk.game.Globals.*;
-import static com.chalwk.game.Moves.moveAllowed;
-import static com.chalwk.game.Moves.placeMove;
 import static com.chalwk.game.PrivateMessage.privateMessage;
 import static com.chalwk.game.board.getBoardEmbed;
 import static com.chalwk.game.board.setupButtons;
@@ -35,7 +33,7 @@ public class ButtonClick {
             event.getMessage().delete().queue();
 
             String starter = whoStarts(challengerName, opponentName);
-            EmbedBuilder currentBoard = getBoardEmbed(board, starter, challengerName, opponentName, event);
+            EmbedBuilder currentBoard = getBoardEmbed(board, starter, challengerName, opponentName);
 
             setupButtons(board, currentBoard, event);
             game[2] = "true";
@@ -79,12 +77,12 @@ public class ButtonClick {
         assert member != null;
         String memberID = member.getId();
 
-        if (games.containsKey(guildID)) {
+        if (concurrentGames.containsKey(guildID)) {
 
             String buttonID = event.getComponentId();
             String buttonLabel = event.getComponent().getLabel();
 
-            String[] game = games.get(guildID);
+            String[] game = concurrentGames.get(guildID);
 
             String challengerID = game[0];
             String opponentID = game[1];
@@ -102,15 +100,15 @@ public class ButtonClick {
 
             boolean gameStarted = game[2].equals("true");
             if (!gameStarted) {
-                startGame(board, game, buttonID, event);
+                //startGame(board, game, buttonID, event);
             } else {
 
                 char symbol = (memberID.equals(challengerID)) ? player2 : player1;
                 String whosTurn = (memberID.equals(challengerID)) ? opponentName : challengerName;
 
-                if (!moveAllowed(board, event, buttonLabel, whosTurn, challengerName, opponentName)) return;
+                //if (!moveAllowed(board, event, buttonLabel, whosTurn, challengerName, opponentName)) return;
 
-                placeMove(board, buttonLabel, symbol, whosTurn, challengerName, opponentName, event, game);
+                //placeMove(board, buttonLabel, symbol, whosTurn, challengerName, opponentName, event, game);
             }
         }
     }

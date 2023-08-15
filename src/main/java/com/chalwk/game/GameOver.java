@@ -14,7 +14,7 @@ public class GameOver {
         Member member = event.getMember();
         assert member != null;
 
-        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName, event);
+        EmbedBuilder currentBoard = getBoardEmbed(board, whosTurn, challengerName, opponentName);
         if (state == 0) {
             currentBoard.setDescription("Game Over! It's a draw!");
         } else {
