@@ -45,7 +45,7 @@ public class Game {
 
     public Game(OptionMapping boardSize, SlashCommandInteractionEvent event, String challengerID, String opponentID) {
         setGuild(event);
-        setPlayers(challengerID, opponentID);
+        setCompetitors(challengerID, opponentID);
         createBoard(boardSize);
     }
 
@@ -53,7 +53,7 @@ public class Game {
         this.guild = event.getGuild();
     }
 
-    private void setPlayers(String challengerID, String opponentID) {
+    private void setCompetitors(String challengerID, String opponentID) {
         this.challengerID = challengerID;
         this.opponentID = opponentID;
         this.challengerName = guild.getMemberById(challengerID).getEffectiveName();
@@ -177,29 +177,17 @@ public class Game {
                         .addActionRow(row2)
                         .addActionRow(row3).queue();
             }
-            case 4 -> {
-                List<Button> row1 = buttons.subList(0, 4);
-                List<Button> row2 = buttons.subList(4, 8);
-                List<Button> row3 = buttons.subList(8, 12);
-                List<Button> row4 = buttons.subList(12, 16);
+
+            case 4, 5 -> {
+                List<Button> row1 = buttons.subList(0, boardLength);
+                List<Button> row2 = buttons.subList(boardLength, boardLength * 2);
+                List<Button> row3 = buttons.subList(boardLength * 2, boardLength * 3);
+                List<Button> row4 = buttons.subList(boardLength * 3, boardLength * 4);
                 event.replyEmbeds(embed.build())
                         .addActionRow(row1)
                         .addActionRow(row2)
                         .addActionRow(row3)
                         .addActionRow(row4).queue();
-            }
-            case 5 -> {
-                List<Button> row1 = buttons.subList(0, 5);
-                List<Button> row2 = buttons.subList(5, 10);
-                List<Button> row3 = buttons.subList(10, 15);
-                List<Button> row4 = buttons.subList(15, 20);
-                List<Button> row5 = buttons.subList(20, 25);
-                event.replyEmbeds(embed.build())
-                        .addActionRow(row1)
-                        .addActionRow(row2)
-                        .addActionRow(row3)
-                        .addActionRow(row4)
-                        .addActionRow(row5).queue();
             }
         }
     }
@@ -286,13 +274,7 @@ public class Game {
     private void acceptInvitation(ButtonInteractionEvent event) {
         event.getMessage().delete().queue();
         EmbedBuilder currentBoard = getBoardEmbed();
-        setupButtons(currentBoard, event);
-    }
-
-    private void cancelInvitation(ButtonInteractionEvent event, Member member) {
-        String size = this.board.length + "x" + this.board.length;
-        privateMessage(event, member, "The (" + size + ") game invite to " + this.opponentName + " was cancelled.");
-        event.getMessage().delete().queue();
+        setupButtons(currentBoard, event); // also shows initial board.
     }
 
     private void declineInvitation(ButtonInteractionEvent event) {
@@ -303,5 +285,11 @@ public class Game {
                 .build()).queue();
         Member challenger = guild.getMemberById(this.challengerID);
         privateMessage(event, challenger, "Your game invite to " + this.opponentName + " was declined.");
+    }
+
+    private void cancelInvitation(ButtonInteractionEvent event, Member member) {
+        String size = this.board.length + "x" + this.board.length;
+        privateMessage(event, member, "The (" + size + ") game invite to " + this.opponentName + " was cancelled.");
+        event.getMessage().delete().queue();
     }
 }
