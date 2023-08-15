@@ -3,6 +3,7 @@ package com.chalwk.game;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -11,12 +12,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.chalwk.Main.getBotAvatar;
+import static com.chalwk.Main.getBotName;
+import static com.chalwk.game.GameOver.gameOver;
 import static com.chalwk.game.Globals.board_layout;
+import static com.chalwk.game.PrivateMessage.privateMessage;
 
-public class NewGame {
+public class Game {
 
-    public static char player1 = 'X';
-    public static char player2 = 'O';
     public static char filler = '-';
     public static String[] letters = {
             "A", "B", "C", "D",
@@ -27,15 +30,21 @@ public class NewGame {
             "U", "V", "W", "X",
             "Y", "Z"
     };
+    public char player1 = 'X';
+    public char player2 = 'O';
+    public String whos_turn;
     public String challengerID;
     public String opponentID;
     public String challengerName;
     public String opponentName;
     public Map<String, int[]> cell_indicators;
-    private Guild guild;
+    public int gameID;
+    public boolean started;
+    public char symbol;
     private char[][] board;
+    private Guild guild;
 
-    public NewGame(OptionMapping boardSize, SlashCommandInteractionEvent event, String challengerID, String opponentID) {
+    public Game(OptionMapping boardSize, SlashCommandInteractionEvent event, String challengerID, String opponentID) {
         setGuild(event);
         setPlayers(challengerID, opponentID);
         createBoard(boardSize);
@@ -152,6 +161,7 @@ public class NewGame {
 
     private void setupButtons(EmbedBuilder embed, ButtonInteractionEvent event) {
 
+        this.started = true;
         int boardLength = this.getBoard().length;
         List<Button> buttons = new ArrayList<>();
         for (int row = 0; row < boardLength; row++) {
@@ -195,6 +205,89 @@ public class NewGame {
                         .addActionRow(row4)
                         .addActionRow(row5).queue();
             }
+        }
+    }
+
+    public boolean moveAllowed(ButtonInteractionEvent event, String buttonLabel) {
+
+        int[] cells = this.cell_indicators.get(buttonLabel.toUpperCase());
+        if (this.board[cells[0]][cells[1]] == filler) {
+            return true;
+        }
+
+        EmbedBuilder currentBoard = getBoardEmbed();
+        currentBoard.addField(this.whos_turn + ", that cell is already taken. Please select another cell.", "", true);
+        event.editMessageEmbeds(currentBoard.build()).queue();
+
+        return false;
+    }
+
+    public void placeMove(ButtonInteractionEvent event, String input, Game game) {
+
+        int[] cells = this.cell_indicators.get(input.toUpperCase());
+        int row = cells[0];
+        int col = cells[1];
+
+        this.board[row][col] = this.symbol;
+        EmbedBuilder currentBoard = getBoardEmbed();
+        currentBoard.addField(this.whos_turn + " selected " + input.toUpperCase(), "\n\n", true);
+
+        event.editMessageEmbeds(currentBoard.build()).queue();
+
+        gameOver(game, event);
+    }
+
+    public EmbedBuilder getBoardEmbed() {
+
+        String botName = getBotName();
+        String botAvatar = getBotAvatar();
+
+        EmbedBuilder embed = new EmbedBuilder();
+
+        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n" + this.challengerName + "  vs  " + this.opponentName);
+        embed.addField("Board:", "```" + printBoard() + "```", false);
+        embed.addField("It's now " + this.whos_turn + "'s turn.", "", false);
+
+        embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
+        return embed;
+    }
+
+    private String whoStarts() {
+        Random random = new Random();
+        int randomNum = random.nextInt(2);
+        return (randomNum == 0) ? this.challengerName : this.opponentName;
+    }
+
+    public void startGame(ButtonInteractionEvent event, String buttonID) {
+
+        Member member = event.getMember();
+        String userID = member.getId();
+
+        if (buttonID.equalsIgnoreCase("accept")) {
+            event.getMessage().delete().queue();
+            EmbedBuilder currentBoard = getBoardEmbed();
+            setupButtons(currentBoard, event);
+        } else if (buttonID.equalsIgnoreCase("decline")) {
+            if (!userID.equals(this.opponentID)) {
+                privateMessage(event, member, "You are not the opponent. Unable to decline.");
+                return;
+            }
+            event.getMessage().delete().queue();
+            event.replyEmbeds(new EmbedBuilder()
+                    .setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕ | " + this.challengerName + " vs " + this.opponentName)
+                    .setDescription("Game Declined.")
+                    .build()).queue();
+
+            Member challenger = guild.getMemberById(this.challengerID);
+            privateMessage(event, challenger, "Your game invite to " + this.opponentName + " was declined.");
+        } else if (buttonID.equalsIgnoreCase("cancel")) {
+            if (!userID.equals(this.challengerID)) {
+                privateMessage(event, member, "You are not the challenger. Unable to cancel.");
+                return;
+            }
+            String size = this.getBoard().length + "x" + this.getBoard().length;
+            privateMessage(event, member, "The (" + size + ") game invite to " + this.opponentName + " was cancelled.");
+            event.getMessage().delete().queue();
         }
     }
 }

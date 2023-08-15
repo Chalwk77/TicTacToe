@@ -4,12 +4,7 @@ package com.chalwk.game;
 
 public class Globals {
 
-    public static NewGame[] concurrentGames = new NewGame[0];
-
-    public static int getGameCount() {
-        return concurrentGames.length;
-    }
-
+    public static Game[] concurrentGames = new Game[0];
     public static int[][][] WINNING_COMBINATIONS = {
 
             // 3x3:
@@ -65,4 +60,8 @@ public class Globals {
                     {' ', ' ', ' ', ' ', ' '}
             }
     };
+
+    public static int getGameCount() {
+        return concurrentGames.length;
+    }
 }

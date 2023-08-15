@@ -2,7 +2,7 @@
 
 package com.chalwk.commands;
 
-import com.chalwk.game.NewGame;
+import com.chalwk.game.Game;
 import com.chalwk.listeners.CommandInterface;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -71,21 +71,18 @@ public class Invite implements CommandInterface {
     private void invitePlayer(SlashCommandInteractionEvent event, OptionMapping size, String challengerID, String opponentID) {
 
         int gameCount = getGameCount();
-        NewGame new_game = new NewGame(size, event, challengerID, opponentID);
+        Game new_game = new Game(size, event, challengerID, opponentID);
         if (gameCount == 0) {
-            concurrentGames = new NewGame[1];
+            concurrentGames = new Game[1];
             concurrentGames[0] = new_game;
         } else {
-            NewGame[] newConcurrentGames = new NewGame[gameCount + 1];
+            Game[] newConcurrentGames = new Game[gameCount + 1];
             System.arraycopy(concurrentGames, 0, newConcurrentGames, 0, gameCount);
             newConcurrentGames[gameCount] = new_game;
             concurrentGames = newConcurrentGames;
         }
-        for (NewGame game : concurrentGames) {
-            System.out.println("NEW GAME INVITE SENT:");
-            System.out.println(game.challengerName + " vs " + game.opponentName);
-            System.out.println("Game Count: " + gameCount);
-        }
         concurrentGames[gameCount].showSubmission(event);
+        concurrentGames[gameCount].gameID = gameCount;
+        concurrentGames[gameCount].started = false;
     }
 }
