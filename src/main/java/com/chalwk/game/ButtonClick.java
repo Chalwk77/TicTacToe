@@ -12,7 +12,6 @@ public class ButtonClick {
 
         Member member = event.getMember();
         String memberID = member.getId();
-        String name = member.getUser().getName();
 
         for (Game game : concurrentGames) {
 
@@ -21,12 +20,10 @@ public class ButtonClick {
             String challengerName = game.challengerName;
             String opponentName = game.opponentName;
 
-            boolean started = game.started;
-
             if (memberID.equals(challengerID) || memberID.equals(opponentID)) {
                 Button button = event.getComponent();
                 String buttonID = button.getId();
-                if (!started) {
+                if (!game.started) {
                     game.startGame(event, buttonID);
                 } else {
                     String buttonLabel = button.getLabel();
@@ -41,8 +38,6 @@ public class ButtonClick {
                     event.editButton(button).queue();
                 }
                 break;
-//            } else {
-//                privateMessage(event, member, "You are not a player in this game.");
             }
         }
     }

@@ -36,10 +36,10 @@ public class Game {
     public String opponentID;
     public String challengerName;
     public String opponentName;
-    public Map<String, int[]> cell_indicators = new HashMap<>();
     public boolean started = false;
     public char symbol;
     public int gameID;
+    private Map<String, int[]> cell_indicators = new HashMap<>();
     private char[][] board;
     private Guild guild;
 
@@ -96,8 +96,6 @@ public class Game {
         String[] alphabet = Arrays.copyOfRange(getLetters(), 0, len);
 
         for (int i = 0; i < len; i++) {
-
-            // Print the letters at the top of the board.
             if (i == 0) {
                 sb.append("    ");
                 for (int j = 0; j < len; j++) {
@@ -105,15 +103,11 @@ public class Game {
                 }
             }
             sb.append("\n");
-
-            // Print the middle of the board and numbers on the left side.
             sb.append(i + 1).append(" | ");
             for (int j = 0; j < len; j++) {
                 sb.append(this.board[i][j]).append(" | ");
             }
             sb.append("\n");
-
-            // Print the bottom of the board.
             if (i != len - 1) {
                 sb.append("  |");
                 sb.append("---|".repeat(len));
@@ -125,7 +119,8 @@ public class Game {
 
     private String printBoard() {
         int len = this.board.length;
-        if (len < 3 || len > 5) throw new IllegalStateException("Board size not supported: (" + len + "x" + len + ")");
+        String err = "Board size not supported: (" + len + "x" + len + ")";
+        if (len < 3 || len > 5) throw new IllegalStateException(err);
         return buildBoard();
     }
 
@@ -207,6 +202,10 @@ public class Game {
 
     public boolean moveAllowed(String buttonLabel) {
         int[] cells = this.cell_indicators.get(buttonLabel.toUpperCase());
+        return cells != null && isCellEmpty(cells);
+    }
+
+    private boolean isCellEmpty(int[] cells) {
         return this.board[cells[0]][cells[1]] == filler;
     }
 
