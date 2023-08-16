@@ -81,7 +81,7 @@ public class Game {
     }
 
     public char[][] getBoard() {
-        return this.board;
+        return board;
     }
 
     private String[] getLetters() {

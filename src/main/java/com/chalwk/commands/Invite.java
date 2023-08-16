@@ -60,7 +60,6 @@ public class Invite implements CommandInterface {
 
         int gameCount = getGameCount();
         Game new_game = new Game(size, event, challengerID, opponentID);
-
         if (gameCount == 0) {
             concurrentGames = new Game[1];
             concurrentGames[0] = new_game;
