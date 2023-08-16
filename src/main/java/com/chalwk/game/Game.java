@@ -38,6 +38,7 @@ public class Game {
     public String opponentName;
     public boolean started = false;
     public char symbol;
+    public int gameID;
     private Map<String, int[]> cell_indicators = new HashMap<>();
     private char[][] board;
     private Guild guild;
@@ -124,11 +125,7 @@ public class Game {
     }
 
     public void showSubmission(SlashCommandInteractionEvent event) {
-
-        int boardLength = this.board.length;
-        String botName = event.getJDA().getSelfUser().getName() + " - Copyright (c) 2023. Jericho Crosby";
-
-        EmbedBuilder embed = getEmbedBuilder(event, boardLength, botName);
+        EmbedBuilder embed = getEmbedBuilder();
         List<Button> buttons = new ArrayList<>();
         buttons.add(Button.success("accept", "\uD83D\uDFE2 Accept"));
         buttons.add(Button.danger("decline", "\uD83D\uDD34 Decline"));
@@ -136,15 +133,19 @@ public class Game {
         event.replyEmbeds(embed.build()).addActionRow(buttons).queue();
     }
 
-    private EmbedBuilder getEmbedBuilder(SlashCommandInteractionEvent event, int boardLength, String botName) {
+    private EmbedBuilder getEmbedBuilder() {
+
+        String botName = getBotName();
+        String botAvatar = getBotAvatar();
+
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
         embed.setDescription("You have been invited to play TicTacToe.");
         embed.addField("Challenger:", "<@" + this.challengerID + ">", true);
         embed.addField("Opponent:", "<@" + this.opponentID + ">", true);
         embed.addField("A random player will be selected to go first.", "", false);
-        embed.addField("Board: (" + boardLength + "x" + boardLength + ")", "```" + printBoard() + "```", false);
-        embed.setFooter(botName, event.getJDA().getSelfUser().getAvatarUrl());
+        embed.addField("Board: (" + this.board.length + "x" + this.board.length + ")", "```" + printBoard() + "```", false);
+        embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
         return embed;
     }
 
@@ -232,12 +233,15 @@ public class Game {
         String botAvatar = getBotAvatar();
 
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕\n\n" + this.challengerName + "  vs  " + this.opponentName);
-        embed.addField("Board:", "```" + printBoard() + "```", false);
+        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
+        embed.addField("Challenger:", "<@" + this.challengerID + ">", true);
+        embed.addField("Opponent:", "<@" + this.opponentID + ">", true);
+        embed.addField("Board: (" + this.board.length + "x" + this.board.length + ")", "```" + printBoard() + "```", false);
 
         this.whos_turn = this.whos_turn == null ? whoStarts() : this.whos_turn;
-        embed.addField("It's now " + this.whos_turn + "'s turn.", "", false);
+        String sym = this.whos_turn.equals(this.challengerName) ? String.valueOf(this.player1) : String.valueOf(this.player2);
 
+        embed.addField("It's now " + this.whos_turn + "'s turn (" + sym + ").", "", false);
         embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
         return embed;
     }
@@ -290,5 +294,9 @@ public class Game {
         String size = this.board.length + "x" + this.board.length;
         privateMessage(event, member, "The (" + size + ") game invite to " + this.opponentName + " was cancelled.");
         event.getMessage().delete().queue();
+    }
+
+    public int getGameID() {
+        return this.gameID;
     }
 }

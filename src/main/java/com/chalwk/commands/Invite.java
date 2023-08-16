@@ -65,5 +65,6 @@ public class Invite implements CommandInterface {
         concurrentGames = temp;
         concurrentGames[length] = new Game(size, event, challengerID, opponentID);
         concurrentGames[length].showSubmission(event);
+        concurrentGames[length].gameID = length;
     }
 }

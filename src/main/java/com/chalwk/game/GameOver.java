@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
 import static com.chalwk.game.Globals.WINNING_COMBINATIONS;
+import static com.chalwk.game.Globals.concurrentGames;
 
 public class GameOver {
 
@@ -22,6 +23,8 @@ public class GameOver {
         }
         event.getHook().deleteOriginal().queue();
         event.getHook().sendMessageEmbeds(currentBoard.build()).queue();
+
+        concurrentGames[game.getGameID()] = null;
     }
 
     public static boolean gameOver(Game game, ButtonInteractionEvent event) {
