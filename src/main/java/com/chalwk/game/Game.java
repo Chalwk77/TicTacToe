@@ -205,21 +205,9 @@ public class Game {
         }
     }
 
-    public boolean moveAllowed(ButtonInteractionEvent event, String buttonLabel) {
-
+    public boolean moveAllowed(String buttonLabel) {
         int[] cells = this.cell_indicators.get(buttonLabel.toUpperCase());
-        if (this.board[cells[0]][cells[1]] == filler) {
-            return true;
-        }
-
-        Member member = event.getMember();
-        String name = member.getEffectiveName();
-
-        EmbedBuilder currentBoard = getBoardEmbed();
-        currentBoard.addField(name + ", that cell is already taken. Please select another cell.", "", true);
-        event.editMessageEmbeds(currentBoard.build()).queue();
-
-        return false;
+        return this.board[cells[0]][cells[1]] == filler;
     }
 
     public void placeMove(ButtonInteractionEvent event, String input, Game game) {

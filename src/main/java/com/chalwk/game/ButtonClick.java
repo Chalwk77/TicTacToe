@@ -32,10 +32,13 @@ public class ButtonClick {
                     String buttonLabel = button.getLabel();
                     game.whos_turn = (memberID.equals(challengerID)) ? opponentName : challengerName;
 
-                    if (!game.moveAllowed(event, buttonLabel)) return;
+                    if (!game.moveAllowed(buttonLabel)) return;
 
                     game.symbol = (memberID.equals(challengerID)) ? game.player2 : game.player1;
                     game.placeMove(event, buttonLabel, game); // magic happens here.
+
+                    button = button.asDisabled();
+                    event.editButton(button).queue();
                 }
                 break;
 //            } else {
