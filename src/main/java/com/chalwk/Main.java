@@ -2,7 +2,6 @@
 
 package com.chalwk;
 
-import com.chalwk.game.TEST;
 import com.chalwk.listeners.CommandInterface;
 import com.chalwk.listeners.CommandManager;
 import com.chalwk.listeners.EventListeners;
@@ -23,11 +22,6 @@ import java.util.logging.Level;
 import static com.chalwk.util.Authentication.getToken;
 import static org.reflections.Reflections.log;
 
-// fixme: Players can place a move on a button when it's not their turn.
-// fixme: Throws NullPointerException (Cannot load from int array because "cells" is null) when you start another game.
-// todo: Prevent players from starting a game with themselves.
-// todo: Implement invitation expiration timer.
-
 public class Main {
 
     public static String botName;
@@ -37,27 +31,6 @@ public class Main {
     public Main() throws LoginException, IOException {
         shardManager = buildBot();
         shardManager.addEventListener(loadCommands());
-
-        //
-        // TEST CODE WORKING:
-        //
-        TEST[] concurrent = new TEST[0];
-        int length = concurrent.length;
-        for (int i = 0; i < 10; i++) {
-            TEST[] temp = new TEST[length + 1];
-            System.arraycopy(concurrent, 0, temp, 0, length);
-            concurrent = temp;
-            concurrent[length] = new TEST();
-            concurrent[length].setGameID(i);
-            concurrent[length].setChallengerName("nothing");
-            length = concurrent.length;
-        }
-        concurrent[5].setChallengerName("Jericho");
-        for (TEST test : concurrent) {
-            int gameID = test.getGameID();
-            String challengerName = test.getChallengerName();
-            System.out.println("Game ID: " + gameID + " Challenger Name: " + challengerName);
-        }
     }
 
     public static void main(String[] args) {

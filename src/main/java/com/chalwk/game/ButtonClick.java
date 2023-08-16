@@ -12,6 +12,8 @@ public class ButtonClick {
 
         Member member = event.getMember();
         String memberID = member.getId();
+        Button button = event.getComponent();
+        String buttonID = button.getId();
 
         for (Game game : concurrentGames) {
 
@@ -21,15 +23,14 @@ public class ButtonClick {
             String opponentName = game.opponentName;
 
             if (memberID.equals(challengerID) || memberID.equals(opponentID)) {
-                Button button = event.getComponent();
-                String buttonID = button.getId();
                 if (!game.started) {
                     game.startGame(event, buttonID);
                 } else {
+
                     String buttonLabel = button.getLabel();
                     game.whos_turn = (memberID.equals(challengerID)) ? opponentName : challengerName;
 
-                    if (!game.moveAllowed(buttonLabel)) return;
+                    if (!game.moveAllowed(buttonLabel)) continue;
 
                     game.symbol = (memberID.equals(challengerID)) ? game.player2 : game.player1;
                     game.placeMove(event, buttonLabel, game); // magic happens here.
@@ -37,7 +38,6 @@ public class ButtonClick {
                     button = button.asDisabled();
                     event.editButton(button).queue();
                 }
-                break;
             }
         }
     }

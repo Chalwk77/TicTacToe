@@ -38,7 +38,6 @@ public class Game {
     public String opponentName;
     public boolean started = false;
     public char symbol;
-    public int gameID;
     private Map<String, int[]> cell_indicators = new HashMap<>();
     private char[][] board;
     private Guild guild;

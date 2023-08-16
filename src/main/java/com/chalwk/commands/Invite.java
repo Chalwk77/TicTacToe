@@ -12,7 +12,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.chalwk.game.Globals.*;
+import static com.chalwk.game.Globals.board_layout;
+import static com.chalwk.game.Globals.concurrentGames;
 import static com.chalwk.game.PrivateMessage.privateMessage;
 
 public class Invite implements CommandInterface {
@@ -58,18 +59,11 @@ public class Invite implements CommandInterface {
 
     private void invitePlayer(SlashCommandInteractionEvent event, OptionMapping size, String challengerID, String opponentID) {
 
-        int gameCount = getGameCount();
-        Game new_game = new Game(size, event, challengerID, opponentID);
-        if (gameCount == 0) {
-            concurrentGames = new Game[1];
-            concurrentGames[0] = new_game;
-        } else {
-            Game[] newConcurrentGames = new Game[gameCount + 1];
-            System.arraycopy(concurrentGames, 0, newConcurrentGames, 0, gameCount);
-            newConcurrentGames[gameCount] = new_game;
-            concurrentGames = newConcurrentGames;
-        }
-        concurrentGames[gameCount].showSubmission(event);
-        concurrentGames[gameCount].gameID = gameCount;
+        int length = concurrentGames.length;
+        Game[] temp = new Game[length + 1];
+        System.arraycopy(concurrentGames, 0, temp, 0, length);
+        concurrentGames = temp;
+        concurrentGames[length] = new Game(size, event, challengerID, opponentID);
+        concurrentGames[length].showSubmission(event);
     }
 }
