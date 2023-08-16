@@ -162,8 +162,9 @@ public class Game {
         List<Button> buttons = new ArrayList<>();
         for (int row = 0; row < boardLength; row++) {
             for (int col = 0; col < boardLength; col++) {
-                int id = (row * boardLength) + col;
-                buttons.add(Button.secondary(String.valueOf(id), getLetters()[row] + (col + 1)));
+                String letter = letters[col];
+                String buttonLabel = letter + (row + 1);
+                buttons.add(Button.primary(buttonLabel, buttonLabel));
             }
         }
 

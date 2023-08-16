@@ -17,7 +17,6 @@ public class GameOver {
         if (state == 0) {
             currentBoard.setDescription("Game Over! It's a draw!");
         } else {
-
             String name = member.getEffectiveName();
             currentBoard.setDescription("Game Over! " + name + " has won the game!");
         }
