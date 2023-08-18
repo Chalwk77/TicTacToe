@@ -4,6 +4,7 @@ package com.chalwk.commands;
 
 import com.chalwk.game.Game;
 import com.chalwk.listeners.CommandInterface;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -46,19 +47,27 @@ public class Invite implements CommandInterface {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        OptionMapping option = event.getOption("opponent");
+
         OptionMapping size = event.getOption("board");
-        if (option.getAsUser().isBot()) {
-            privateMessage(event, event.getMember(), "You cannot invite a bot to play TicTacToe.");
+        OptionMapping opponent = event.getOption("opponent");
+
+        Member member = event.getMember();
+        assert member != null;
+        String memberID = member.getId();
+
+        assert opponent != null;
+        String opponentID = opponent.getAsUser().getId();
+
+        if (opponent.getAsUser().isBot()) {
+            privateMessage(event, member, "You cannot invite a bot to play Tic-Tac-Toe.");
+        } else if (memberID.equals(opponentID)) {
+            privateMessage(event, member, "You cannot invite yourself to play Tic-Tac-Toe.");
         } else {
-            String challengerID = event.getUser().getId();
-            String opponentID = option.getAsUser().getId();
-            invitePlayer(event, size, challengerID, opponentID);
+            invitePlayer(event, size, memberID, opponentID);
         }
     }
 
     private void invitePlayer(SlashCommandInteractionEvent event, OptionMapping size, String challengerID, String opponentID) {
-
         int length = concurrentGames.length;
         Game[] temp = new Game[length + 1];
         System.arraycopy(concurrentGames, 0, temp, 0, length);

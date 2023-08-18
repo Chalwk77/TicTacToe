@@ -4,42 +4,70 @@ package com.chalwk.game;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import org.jetbrains.annotations.NotNull;
 
 import static com.chalwk.game.Globals.concurrentGames;
+import static com.chalwk.game.PrivateMessage.privateMessage;
 
 public class ButtonClick {
     public static void buttonClick(ButtonInteractionEvent event) {
 
-        Member member = event.getMember();
-        String memberID = member.getId();
-        Button button = event.getComponent();
-        String buttonID = button.getId();
+        buttonData data = getButtonData(event);
 
         for (Game game : concurrentGames) {
             if (game == null) continue;
 
+            String buttonLabel = data.button.getLabel();
             String challengerID = game.challengerID;
             String opponentID = game.opponentID;
-            String challengerName = game.challengerName;
-            String opponentName = game.opponentName;
 
-            if (memberID.equals(challengerID) || memberID.equals(opponentID)) {
+            if (data.memberID().equals(challengerID) || data.memberID().equals(opponentID)) {
                 if (!game.started) {
-                    game.startGame(event, buttonID);
+                    if (data.buttonID.equalsIgnoreCase("accept")) {
+                        if (canClick(data, opponentID, event, "You are not the opponent. Unable to accept."))
+                            continue;
+                        game.acceptInvitation(event);
+                    } else if (data.buttonID.equalsIgnoreCase("decline")) {
+                        if (canClick(data, opponentID, event, "You are not the opponent. Unable to decline."))
+                            continue;
+                        game.declineInvitation(event, data.member);
+                    } else if (data.buttonID.equalsIgnoreCase("cancel")) {
+                        if (canClick(data, challengerID, event, "You are not the challenger. Unable to cancel."))
+                            continue;
+                        game.cancelInvitation(event, data.member);
+                    }
+                } else if (!game.moveAllowed(buttonLabel) || (!yourTurn(game, data.member))) {
+                    return;
                 } else {
-
-                    String buttonLabel = button.getLabel();
-                    if (!game.moveAllowed(buttonLabel)) continue;
-
-                    game.whos_turn = (memberID.equals(challengerID)) ? opponentName : challengerName;
-
-//                    button = button.asDisabled();
-//                    event.editButton(button).queue();
-
-                    game.symbol = (memberID.equals(challengerID)) ? game.player2 : game.player1;
-                    game.placeMove(event, buttonLabel, game); // magic happens here.
+                    game.placeMove(event, buttonLabel);
                 }
             }
         }
+    }
+
+    private static boolean canClick(buttonData button, String playerID, ButtonInteractionEvent event, String message) {
+        if (!button.memberID.equals(playerID)) {
+            privateMessage(event, button.member, message);
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean yourTurn(Game game, Member member) {
+        return member.getEffectiveName().equals(game.whos_turn);
+    }
+
+    @NotNull
+    private static buttonData getButtonData(ButtonInteractionEvent event) {
+        Member member = event.getMember();
+        String memberID = member.getId();
+        Button button = event.getComponent();
+        String buttonLabel = button.getLabel();
+        String buttonID = button.getId();
+        return new buttonData(member, memberID, button, buttonID, buttonLabel);
+    }
+
+    private record buttonData(Member member, String memberID, Button button, String buttonID, String buttonLabel) {
+
     }
 }

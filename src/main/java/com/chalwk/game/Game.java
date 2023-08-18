@@ -143,16 +143,78 @@ public class Game {
         embed.setDescription("You have been invited to play TicTacToe.");
         embed.addField("Challenger:", "<@" + this.challengerID + ">", true);
         embed.addField("Opponent:", "<@" + this.opponentID + ">", true);
-        embed.addField("A random player will be selected to go first.", "", false);
         embed.addField("Board: (" + this.board.length + "x" + this.board.length + ")", "```" + printBoard() + "```", false);
         embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
         return embed;
     }
 
-    private void setupButtons(EmbedBuilder embed, ButtonInteractionEvent event) {
+    public boolean moveAllowed(String buttonLabel) {
+        int[] cells = this.cell_indicators.get(buttonLabel.toUpperCase());
+        return cells != null && isCellEmpty(cells);
+    }
 
-        this.started = true;
+    private boolean isCellEmpty(int[] cells) {
+        return this.board[cells[0]][cells[1]] == filler;
+    }
+
+    public void placeMove(ButtonInteractionEvent event, String input) {
+
+        Member member = event.getMember();
+        String name = member.getEffectiveName();
+
+        this.setSymbol(member.getId()); // set the symbol for the player (X or O)
+
+        int[] cells = this.cell_indicators.get(input.toUpperCase());
+        int row = cells[0];
+        int col = cells[1];
+
+        this.setTurn();
+        this.board[row][col] = this.symbol;
+
+        EmbedBuilder embed = getEmbed();
+        embed.addField(name + " selected " + input.toUpperCase(), "\n\n", true);
+        embed.setDescription("It is now " + this.whos_turn + "'s turn.");
+        event.editMessageEmbeds(embed.build()).queue();
+
+        gameOver(this, event);
+    }
+
+    public EmbedBuilder getEmbed() {
+
+        String botName = getBotName();
+        String botAvatar = getBotAvatar();
+
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
+        embed.addField("Challenger:", "<@" + this.challengerID + ">", true);
+        embed.addField("Opponent:", "<@" + this.opponentID + ">", true);
+        embed.addField("Board: (" + this.board.length + "x" + this.board.length + ")", "```" + printBoard() + "```", false);
+        embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
+        return embed;
+    }
+
+    private String whoStarts() {
+        Random random = new Random();
+        int randomNum = random.nextInt(2);
+        return (randomNum == 0) ? this.challengerName : this.opponentName;
+    }
+
+    public void setTurn() {
+        this.whos_turn = (this.whos_turn.equals(this.challengerName)) ? this.opponentName : this.challengerName;
+    }
+
+    public void setSymbol(String playerID) {
+        this.symbol = (playerID.equals(challengerID)) ? this.player2 : this.player1;
+    }
+
+    private void initializeGame(ButtonInteractionEvent event) {
+
         int boardLength = this.board.length;
+        this.started = true;
+        this.whos_turn = whoStarts();
+
+        EmbedBuilder embed = getEmbedBuilder();
+        embed.setDescription("The game has started. " + this.whos_turn + " goes first.");
 
         List<Button> buttons = new ArrayList<>();
         for (int row = 0; row < boardLength; row++) {
@@ -200,99 +262,18 @@ public class Game {
         }
     }
 
-    public boolean moveAllowed(String buttonLabel) {
-        int[] cells = this.cell_indicators.get(buttonLabel.toUpperCase());
-        return cells != null && isCellEmpty(cells);
-    }
-
-    private boolean isCellEmpty(int[] cells) {
-        return this.board[cells[0]][cells[1]] == filler;
-    }
-
-    public void placeMove(ButtonInteractionEvent event, String input, Game game) {
-
-        Member member = event.getMember();
-        String name = member.getEffectiveName();
-
-        int[] cells = this.cell_indicators.get(input.toUpperCase());
-        int row = cells[0];
-        int col = cells[1];
-
-        this.board[row][col] = this.symbol;
-        EmbedBuilder currentBoard = getBoardEmbed();
-
-        currentBoard.addField(name + " selected " + input.toUpperCase(), "\n\n", true);
-        event.editMessageEmbeds(currentBoard.build()).queue();
-
-        gameOver(game, event);
-    }
-
-    public EmbedBuilder getBoardEmbed() {
-
-        String botName = getBotName();
-        String botAvatar = getBotAvatar();
-
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
-        embed.addField("Challenger:", "<@" + this.challengerID + ">", true);
-        embed.addField("Opponent:", "<@" + this.opponentID + ">", true);
-        embed.addField("Board: (" + this.board.length + "x" + this.board.length + ")", "```" + printBoard() + "```", false);
-
-        this.whos_turn = this.whos_turn == null ? whoStarts() : this.whos_turn;
-        String sym = this.whos_turn.equals(this.challengerName) ? String.valueOf(this.player1) : String.valueOf(this.player2);
-
-        embed.addField("It's now " + this.whos_turn + "'s turn (" + sym + ").", "", false);
-        embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
-        return embed;
-    }
-
-    private String whoStarts() {
-        Random random = new Random();
-        int randomNum = random.nextInt(2);
-        return (randomNum == 0) ? this.challengerName : this.opponentName;
-    }
-
-    public void startGame(ButtonInteractionEvent event, String buttonID) {
-
-        Member member = event.getMember();
-        String userID = member.getId();
-
-        if (buttonID.equalsIgnoreCase("accept")) {
-            acceptInvitation(event);
-        } else if (buttonID.equalsIgnoreCase("decline")) {
-            if (!userID.equals(this.opponentID)) {
-                privateMessage(event, member, "You are not the opponent. Unable to decline.");
-                return;
-            }
-            declineInvitation(event);
-        } else if (buttonID.equalsIgnoreCase("cancel")) {
-            if (!userID.equals(this.challengerID)) {
-                privateMessage(event, member, "You are not the challenger. Unable to cancel.");
-                return;
-            }
-            cancelInvitation(event, member);
-        }
-    }
-
-    private void acceptInvitation(ButtonInteractionEvent event) {
+    void acceptInvitation(ButtonInteractionEvent event) {
         event.getMessage().delete().queue();
-        EmbedBuilder currentBoard = getBoardEmbed();
-        setupButtons(currentBoard, event); // also shows initial board.
+        initializeGame(event);
     }
 
-    private void declineInvitation(ButtonInteractionEvent event) {
+    void declineInvitation(ButtonInteractionEvent event, Member member) {
+        privateMessage(event, member, "Your game invite to " + this.opponentName + " was declined.");
         event.getMessage().delete().queue();
-        event.replyEmbeds(new EmbedBuilder()
-                .setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕ | " + this.challengerName + " vs " + this.opponentName)
-                .setDescription("Game Declined.")
-                .build()).queue();
-        Member challenger = guild.getMemberById(this.challengerID);
-        privateMessage(event, challenger, "Your game invite to " + this.opponentName + " was declined.");
     }
 
-    private void cancelInvitation(ButtonInteractionEvent event, Member member) {
-        String size = this.board.length + "x" + this.board.length;
-        privateMessage(event, member, "The (" + size + ") game invite to " + this.opponentName + " was cancelled.");
+    void cancelInvitation(ButtonInteractionEvent event, Member member) {
+        privateMessage(event, member, "Your game invite to " + this.opponentName + " was cancelled.");
         event.getMessage().delete().queue();
     }
 

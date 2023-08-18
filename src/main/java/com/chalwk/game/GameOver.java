@@ -14,15 +14,15 @@ public class GameOver {
         Member member = event.getMember();
         assert member != null;
 
-        EmbedBuilder currentBoard = game.getBoardEmbed();
+        EmbedBuilder embed = game.getEmbed();
         if (state == 0) {
-            currentBoard.setDescription("Game Over! It's a draw!");
+            embed.setDescription("Game Over! It's a draw!");
         } else {
             String name = member.getEffectiveName();
-            currentBoard.setDescription("Game Over! " + name + " has won the game!");
+            embed.setDescription("Game Over! " + name + " has won the game!");
         }
         event.getHook().deleteOriginal().queue();
-        event.getHook().sendMessageEmbeds(currentBoard.build()).queue();
+        event.getHook().sendMessageEmbeds(embed.build()).queue();
 
         concurrentGames[game.getGameID()] = null;
     }
