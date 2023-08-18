@@ -60,24 +60,16 @@ public class Game {
         this.opponentName = guild.getMemberById(opponentID).getEffectiveName();
     }
 
-    private void setCellIndicators() {
+    private void createBoard(OptionMapping boardSize) {
         this.cell_indicators = new HashMap<>();
+        this.board = board_layout[boardSize.getAsInt()];
         String[] alphabet = Arrays.copyOfRange(letters, 0, board.length);
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board.length; col++) {
+                this.board[row][col] = filler;
                 this.cell_indicators.put(alphabet[row] + (col + 1), new int[]{col, row});
             }
         }
-    }
-
-    private void createBoard(OptionMapping boardSize) {
-        this.board = board_layout[boardSize.getAsInt()];
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board.length; col++) {
-                this.board[row][col] = filler;
-            }
-        }
-        setCellIndicators();
     }
 
     public char[][] getBoard() {
@@ -95,6 +87,7 @@ public class Game {
         int len = this.board.length;
         String[] alphabet = Arrays.copyOfRange(getLetters(), 0, len);
 
+        sb.append("```");
         for (int i = 0; i < len; i++) {
             if (i == 0) {
                 sb.append("    ");
@@ -113,6 +106,7 @@ public class Game {
                 sb.append("---|".repeat(len));
             }
         }
+        sb.append("```");
 
         return sb.toString();
     }
@@ -143,7 +137,7 @@ public class Game {
         embed.setDescription("You have been invited to play TicTacToe.");
         embed.addField("Challenger:", "<@" + this.challengerID + ">", true);
         embed.addField("Opponent:", "<@" + this.opponentID + ">", true);
-        embed.addField("Board: (" + this.board.length + "x" + this.board.length + ")", "```" + printBoard() + "```", false);
+        embed.addField("Board: (" + this.board.length + "x" + this.board.length + ")", printBoard(), false);
         embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
         return embed;
     }
@@ -188,7 +182,7 @@ public class Game {
         embed.setTitle("⭕.❌ Tic-Tac-Toe ❌.⭕");
         embed.addField("Challenger:", "<@" + this.challengerID + ">", true);
         embed.addField("Opponent:", "<@" + this.opponentID + ">", true);
-        embed.addField("Board: (" + this.board.length + "x" + this.board.length + ")", "```" + printBoard() + "```", false);
+        embed.addField("Board: (" + this.board.length + "x" + this.board.length + ")", printBoard(), false);
         embed.setFooter(botName + " - Copyright (c) 2023. Jericho Crosby", botAvatar);
         return embed;
     }
