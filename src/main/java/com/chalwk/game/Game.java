@@ -11,11 +11,9 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.*;
 
-import static com.chalwk.Main.getBotAvatar;
-import static com.chalwk.Main.getBotName;
+import static com.chalwk.Main.*;
 import static com.chalwk.game.GameOver.gameOver;
 import static com.chalwk.game.Globals.board_layout;
-import static com.chalwk.game.Globals.concurrentGames;
 import static com.chalwk.game.PrivateMessage.privateMessage;
 
 public class Game {
@@ -265,13 +263,13 @@ public class Game {
     void declineInvitation(ButtonInteractionEvent event, Member member) {
         privateMessage(event, member, "Your game invite to " + this.opponentName + " was declined.");
         event.getMessage().delete().queue();
-        concurrentGames[this.gameID] = null;
+        games = removeGame(games, this);
     }
 
     void cancelInvitation(ButtonInteractionEvent event, Member member) {
         privateMessage(event, member, "Your game invite to " + this.opponentName + " was cancelled.");
         event.getMessage().delete().queue();
-        concurrentGames[this.gameID] = null;
+        games = removeGame(games, this);
     }
 
     public int getGameID() {
